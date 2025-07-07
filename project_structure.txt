@@ -1,0 +1,37 @@
+.
+├── cspell.json
+├── debug_odoo_error.ipynb
+├── dossier_docker
+│   └── gestion_magasin
+│       ├── __init__.py
+│       ├── __manifest__.py
+│       ├── addons
+│       ├── config
+│       │   └── odoo.conf
+│       ├── controllers
+│       │   ├── __init__.py
+│       │   └── controllers.py
+│       ├── data
+│       │   ├── rapport.xml
+│       │   └── sequence.xml
+│       ├── demo
+│       │   └── demo.xml
+│       ├── docker-compose.yml
+│       ├── dossier_docker
+│       ├── models
+│       │   ├── __init__.py
+│       │   ├── commande.py
+│       │   └── produit.py
+│       ├── security
+│       │   ├── ir.model.access.csv
+│       │   └── security.xml
+│       └── views
+│           ├── commande_view.xml
+│           ├── menu.xml
+│           ├── produit_view.xml
+│           ├── templates.xml
+│           └── views.xml
+├── project_structure.txt
+└── README.md
+
+12 directories, 23 files

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- 트리 뷰 -->
+        <record id="view_my_model_tree" model="ir.ui.view">
+            <field name="name">my.model.tree</field>
+            <field name="model">my.model</field>
+            <field name="arch" type="xml">
+                <tree string="내 모델">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="state"/>
+                    <field name="date_created"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- 폼 뷰 -->
+        <record id="view_my_model_form" model="ir.ui.view">
+            <field name="name">my.model.form</field>
+            <field name="model">my.model</field>
+            <field name="arch" type="xml">
+                <form string="내 모델">
+                    <header>
+                        <button name="action_confirm" string="확인" type="object" class="oe_highlight"/>
+                        <button name="action_done" string="완료" type="object" class="oe_highlight"/>
+                        <button name="action_draft" string="초안으로 되돌리기" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="partner_id"/>
+                            </group>
+                            <group>
+                                <field name="active"/>
+                                <field name="date_created"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="설명">
+                                <field name="description" placeholder="여기에 설명을 입력하세요..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- 검색 뷰 -->
+        <record id="view_my_model_search" model="ir.ui.view">
+            <field name="name">my.model.search</field>
+            <field name="model">my.model</field>
+            <field name="arch" type="xml">
+                <search string="내 모델 검색">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <filter string="초안" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="확인됨" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                    <filter string="완료" name="done" domain="[('state', '=', 'done')]"/>
+                    <group expand="0" string="그룹화">
+                        <filter string="상태" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="파트너" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- 액션 -->
+        <record id="action_my_model" model="ir.actions.act_window">
+            <field name="name">내 모델</field>
+            <field name="res_model">my.model</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_my_model_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    첫 번째 레코드를 생성하세요!
+                </p>
+                <p>
+                    이 모델을 사용하여 데이터를 관리할 수 있습니다.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo> 
