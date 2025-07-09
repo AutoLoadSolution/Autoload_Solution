@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <!-- 말소생성 페이지 -->
+    <t t-name="AutoloadSolution.CancelCreate">
+        <div class="cancel-create-page" style="height: 100vh; overflow-y: auto; padding: 20px;">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4 text-primary">말소생성 페이지입니다</h1>
+                    
+                    <form t-on-submit="handleSubmit">
+                        <!-- 기본 정보 섹션 -->
+                        <div class="mb-4">
+                            <h3 class="h5 font-weight-bold mb-3 text-dark">기본 정보</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="date" class="form-label">
+                                        말소 일자 <span class="text-danger">*</span>
+                                    </label>
+                                    <input 
+                                        type="date" 
+                                        class="form-control" 
+                                        id="date"
+                                        t-att-value="state.date"
+                                        t-on-input="(ev) => this.handleInputChange('date', ev.target.value)"
+                                        required="required"
+                                    />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="vehicleNumber" class="form-label">
+                                        차량등록번호 <span class="text-danger">*</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="vehicleNumber"
+                                        placeholder="예: 12가3456"
+                                        t-att-value="state.vehicleNumber"
+                                        t-on-input="(ev) => this.handleInputChange('vehicleNumber', ev.target.value)"
+                                        required="required"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- 소유자 정보 섹션 -->
+                        <div class="mb-4">
+                            <h3 class="h5 font-weight-bold mb-3 text-dark">소유자 정보</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="ownerName" class="form-label">
+                                        소유자명 <span class="text-danger">*</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="ownerName"
+                                        placeholder="소유자 성명을 입력하세요"
+                                        t-att-value="state.ownerName"
+                                        t-on-input="(ev) => this.handleInputChange('ownerName', ev.target.value)"
+                                        required="required"
+                                    />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="residentNumber" class="form-label">
+                                        주민등록번호 <span class="text-danger">*</span>
+                                    </label>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="residentNumber"
+                                        placeholder="000000-0000000"
+                                        t-att-value="state.residentNumber"
+                                        t-on-input="(ev) => this.handleInputChange('residentNumber', ev.target.value)"
+                                        required="required"
+                                    />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">
+                                    주소 <span class="text-danger">*</span>
+                                </label>
+                                <textarea 
+                                    class="form-control" 
+                                    id="address"
+                                    rows="3"
+                                    placeholder="전체 주소를 입력하세요"
+                                    t-att-value="state.address"
+                                    t-on-input="(ev) => this.handleInputChange('address', ev.target.value)"
+                                    required="required"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- 차량 정보 섹션 -->
+                        <div class="mb-4">
+                            <h3 class="h5 font-weight-bold mb-3 text-dark">차량 정보</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="mileage" class="form-label">
+                                        주행거리 (km) <span class="text-danger">*</span>
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="mileage"
+                                        placeholder="예: 50000"
+                                        t-att-value="state.mileage"
+                                        t-on-input="(ev) => this.handleInputChange('mileage', ev.target.value)"
+                                        required="required"
+                                    />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="fuelType" class="form-label">
+                                        연료구분 <span class="text-danger">*</span>
+                                    </label>
+                                    <select 
+                                        class="form-control" 
+                                        id="fuelType"
+                                        t-att-value="state.fuelType"
+                                        t-on-change="(ev) => this.handleInputChange('fuelType', ev.target.value)"
+                                        required="required"
+                                    >
+                                        <option value="">연료 종류를 선택하세요</option>
+                                        <option value="gasoline">가솔린</option>
+                                        <option value="diesel">디젤</option>
+                                        <option value="lpg">LPG</option>
+                                        <option value="hybrid">하이브리드</option>
+                                        <option value="electric">전기</option>
+                                        <option value="other">기타</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="vehicleWeight" class="form-label">
+                                        차량무게 (kg) <span class="text-danger">*</span>
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="vehicleWeight"
+                                        placeholder="예: 1500"
+                                        t-att-value="state.vehicleWeight"
+                                        t-on-input="(ev) => this.handleInputChange('vehicleWeight', ev.target.value)"
+                                        required="required"
+                                    />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="chassisNumber" class="form-label">
+                                        차대번호 <span class="text-danger">*</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="chassisNumber"
+                                        placeholder="차대번호를 입력하세요"
+                                        t-att-value="state.chassisNumber"
+                                        t-on-input="(ev) => this.handleInputChange('chassisNumber', ev.target.value)"
+                                        required="required"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- 거래 정보 섹션 -->
+                        <div class="mb-4">
+                            <h3 class="h5 font-weight-bold mb-3 text-dark">거래 정보</h3>
+                            <div class="mb-3">
+                                <label for="dealer" class="form-label">
+                                    거래처 <span class="text-danger">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="dealer"
+                                    placeholder="거래처명을 입력하세요"
+                                    t-att-value="state.dealer"
+                                    t-on-input="(ev) => this.handleInputChange('dealer', ev.target.value)"
+                                    required="required"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- 안내사항 -->
+                        <div class="alert alert-warning mb-4">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-warning rounded-circle" style="width: 8px; height: 8px; margin-top: 6px;"></div>
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="alert-heading mb-2">안내사항</h6>
+                                    <ul class="mb-0 small">
+                                        <li>모든 필수 항목(*)을 정확히 입력해주세요.</li>
+                                        <li>주민등록번호는 보안을 위해 암호화되어 저장됩니다.</li>
+                                        <li>말소 처리 후에는 면장 발급 단계로 진행됩니다.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 버튼 섹션 -->
+                        <div class="d-flex flex-column flex-sm-row gap-3 pt-3">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                <i class="fa fa-save me-2"></i>
+                                말소 정보 저장
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary flex-fill" t-on-click="handleReset">
+                                <i class="fa fa-refresh me-2"></i>
+                                초기화
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates> 

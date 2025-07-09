@@ -16,7 +16,17 @@
     ],
     "assets": {
         "web.assets_backend": [
-            "AutoloadSolution/static/src/**/*",
+            "AutoloadSolution/static/src/main.js",
+            "AutoloadSolution/static/src/main.xml",
+            "AutoloadSolution/static/src/certificate_create.js",
+            "AutoloadSolution/static/src/certificate_create.xml",
+            "AutoloadSolution/static/src/certificate_manage.js",
+            "AutoloadSolution/static/src/certificate_manage.xml",
+            "AutoloadSolution/static/src/cancel_create.js",
+            "AutoloadSolution/static/src/cancel_create.xml",
+            "AutoloadSolution/static/src/cancel_create.css",
+            "AutoloadSolution/static/src/cancel_manage.js",
+            "AutoloadSolution/static/src/cancel_manage.xml",
         ],
     },
     "installable": True,
