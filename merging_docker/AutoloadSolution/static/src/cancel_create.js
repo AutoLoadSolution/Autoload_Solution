@@ -18,6 +18,8 @@ class CancelCreate extends Component {
             dealer: "",
             chassisNumber: "",
             residentNumber: "",
+            uploadedImage: null,
+            currentPage: "inquiry",
         });
     }
 
@@ -42,6 +44,27 @@ class CancelCreate extends Component {
         this.state.dealer = "";
         this.state.chassisNumber = "";
         this.state.residentNumber = "";
+        this.state.uploadedImage = null;
+    }
+
+    handleAddClick() {
+        this.state.currentPage = "input";
+    }
+
+    handleBack() {
+        this.state.currentPage = "inquiry";
+    }
+
+    handleImageUpload() {
+        document.getElementById("imageUpload")?.click();
+    }
+
+    handleImageChange(ev) {
+        const file = ev.target.files && ev.target.files[0];
+        if (file) {
+            this.state.uploadedImage = file;
+            alert(`이미지가 업로드되었습니다: ${file.name}`);
+        }
     }
 }
 
