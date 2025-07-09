@@ -26,9 +26,9 @@
     </record>
 
     <menuitem name="AutoloadSolution" id="AutoloadSolution.menu_root" groups="base.group_user" web_icon="AutoloadSolution,static/description/icon.png"/>
-    <menuitem name="면장생성" id="AutoloadSolution.menu_certificate_create" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_certificate_create" sequence="1"/>
-    <menuitem name="면장관리" id="AutoloadSolution.menu_certificate_manage" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_certificate_manage" sequence="2"/>
-    <menuitem name="말소생성" id="AutoloadSolution.menu_cancel_create" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_cancel_create" sequence="3"/>
-    <menuitem name="말소관리" id="AutoloadSolution.menu_cancel_manage" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_cancel_manage" sequence="4"/>
+    <menuitem name="면장생성" id="AutoloadSolution.menu_certificate_create" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_certificate_create" sequence="3"/>
+    <menuitem name="면장관리" id="AutoloadSolution.menu_certificate_manage" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_certificate_manage" sequence="4"/>
+    <menuitem name="말소생성" id="AutoloadSolution.menu_cancel_create" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_cancel_create" sequence="1"/>
+    <menuitem name="말소관리" id="AutoloadSolution.menu_cancel_manage" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_cancel_manage" sequence="2"/>
   </data>
 </odoo> 

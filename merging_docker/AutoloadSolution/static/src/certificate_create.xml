@@ -3,24 +3,235 @@
 
     <!-- 면장생성 페이지 -->
     <t t-name="AutoloadSolution.CertificateCreate">
-        <div class="certificate-create-page">
-            <h1>면장생성 페이지입니다</h1>
-            <p>이 페이지에서는 새로운 면장을 생성할 수 있습니다.</p>
-            <div class="alert alert-info">
-                <strong>면장생성:</strong> 새로운 면장을 작성하고 등록하는 기능입니다.
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>면장 정보 입력</h5>
+        <!-- 상단 헤더 영역 -->
+        <div class="bg-white border-bottom border-gray-200 mb-4 certificate_header">
+            <div class="container-fluid px-4 py-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fa fa-file-text text-primary" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h1 class="h5 fw-semibold text-dark mb-1">면장 정보 입력</h1>
+                                <p class="text-sm text-muted mb-0">면장 등록을 위한 필수 정보를 입력해주세요.</p>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <p>면장 생성 폼이 여기에 표시됩니다.</p>
-                        </div>
+                    </div>
+                    <div class="d-flex flex-column align-items-end gap-2">
+                        <button type="button" class="btn btn-primary d-flex align-items-center gap-2" t-on-click="handlePhotoRegistration">
+                            <i class="fa fa-camera" style="font-size: 1rem;"></i>
+                            사진으로 업로드하기
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="px-4 px-md-6 px-lg-7" style="max-width: 800px; margin: 0 auto;">
+            <form t-on-submit.prevent="handleSubmit">
+                <div class="card shadow-lg">
+                    <div class="card-body p-6 space-y-6">
+                        <!-- 기본 정보 섹션 -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">기본 정보</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="date" class="form-label text-sm font-medium">
+                                        일자 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date" class="form-control w-100" id="date" t-att-value="state.formData.date" t-on-input="(ev) => this.handleInputChange('date', ev.target.value)" required="required"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="invoiceNo" class="form-label text-sm font-medium">
+                                        Invoice No <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="invoiceNo" placeholder="Invoice 번호 입력" t-att-value="state.formData.invoiceNo" t-on-input="(ev) => this.handleInputChange('invoiceNo', ev.target.value)" required="required"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="client" class="form-label text-sm font-medium">
+                                        거래처 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="client" placeholder="거래처명 입력" t-att-value="state.formData.client" t-on-input="(ev) => this.handleInputChange('client', ev.target.value)" required="required"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="warehouse" class="form-label text-sm font-medium">
+                                        출하창고 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="warehouse" placeholder="출하창고명 입력" t-att-value="state.formData.warehouse" t-on-input="(ev) => this.handleInputChange('warehouse', ev.target.value)" required="required"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="transactionType" class="form-label text-sm font-medium">
+                                        거래 유형 <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-control w-100" id="transactionType" t-att-value="state.formData.transactionType" t-on-input="(ev) => this.handleInputChange('transactionType', ev.target.value)" required="required">
+                                        <option value="">거래 유형 선택</option>
+                                        <option value="수출">수출</option>
+                                        <option value="수입">수입</option>
+                                        <option value="내수">내수</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="transactionCondition" class="form-label text-sm font-medium">
+                                        거래 조건
+                                    </label>
+                                    <select class="form-control w-100" id="transactionCondition" t-att-value="state.formData.transactionCondition" t-on-input="(ev) => this.handleInputChange('transactionCondition', ev.target.value)">
+                                        <option value="">거래 조건 선택</option>
+                                        <option value="FOB">FOB</option>
+                                        <option value="CFR">CFR</option>
+                                        <option value="CIF">CIF</option>
+                                        <option value="EXW">EXW</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- 바이어 정보 섹션 -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">바이어 정보</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="buyerName" class="form-label text-sm font-medium">
+                                        바이어명
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="buyerName" placeholder="바이어명 입력" t-att-value="state.formData.buyerName" t-on-input="(ev) => this.handleInputChange('buyerName', ev.target.value)"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="buyerNumber" class="form-label text-sm font-medium">
+                                        바이어 번호
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="buyerNumber" placeholder="바이어 번호 입력" t-att-value="state.formData.buyerNumber" t-on-input="(ev) => this.handleInputChange('buyerNumber', ev.target.value)"/>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label for="buyerAddress" class="form-label text-sm font-medium">
+                                    바이어 주소
+                                </label>
+                                <textarea class="form-control w-100 mt-2" id="buyerAddress" rows="3" placeholder="바이어 주소 입력" t-att-value="state.formData.buyerAddress" t-on-input="(ev) => this.handleInputChange('buyerAddress', ev.target.value)"></textarea>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- 운송/통관 정보 섹션 -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">운송/통관 정보</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="rorocon" class="form-label text-sm font-medium">
+                                        RORO/CON
+                                    </label>
+                                    <select class="form-control w-100" id="rorocon" t-att-value="state.formData.rorocon" t-on-input="(ev) => this.handleInputChange('rorocon', ev.target.value)">
+                                        <option value="">RORO/CON 선택</option>
+                                        <option value="RORO">RORO</option>
+                                        <option value="CON">CON</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="containerNumber" class="form-label text-sm font-medium">
+                                        컨테이너 번호
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="containerNumber" placeholder="컨테이너 번호 입력" t-att-value="state.formData.containerNumber" t-on-input="(ev) => this.handleInputChange('containerNumber', ev.target.value)"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="importCode" class="form-label text-sm font-medium">
+                                        반입 코드 / 장소 명
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="importCode" placeholder="반입 코드/장소명 입력" t-att-value="state.formData.importCode" t-on-input="(ev) => this.handleInputChange('importCode', ev.target.value)"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="exportDeclarationNumber" class="form-label text-sm font-medium">
+                                        수출신고 번호
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="exportDeclarationNumber" placeholder="수출신고 번호 입력" t-att-value="state.formData.exportDeclarationNumber" t-on-input="(ev) => this.handleInputChange('exportDeclarationNumber', ev.target.value)"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="loadingPort" class="form-label text-sm font-medium">
+                                        적재항
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="loadingPort" placeholder="적재항 입력" t-att-value="state.formData.loadingPort" t-on-input="(ev) => this.handleInputChange('loadingPort', ev.target.value)"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="destinationCountry" class="form-label text-sm font-medium">
+                                        목적국
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="destinationCountry" placeholder="목적국 입력" t-att-value="state.formData.destinationCountry" t-on-input="(ev) => this.handleInputChange('destinationCountry', ev.target.value)"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="fobcfr" class="form-label text-sm font-medium">
+                                        FOB/CFR
+                                    </label>
+                                    <select class="form-control w-100" id="fobcfr" t-att-value="state.formData.fobcfr" t-on-input="(ev) => this.handleInputChange('fobcfr', ev.target.value)">
+                                        <option value="">FOB/CFR 선택</option>
+                                        <option value="FOB">FOB</option>
+                                        <option value="CFR">CFR</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="departure" class="form-label text-sm font-medium">
+                                        출발지
+                                    </label>
+                                    <input type="text" class="form-control w-100" id="departure" placeholder="출발지 입력" t-att-value="state.formData.departure" t-on-input="(ev) => this.handleInputChange('departure', ev.target.value)"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- 금액 정보 섹션 -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">금액 정보</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="exportAmount" class="form-label text-sm font-medium">
+                                        수출 금액 (USD)
+                                    </label>
+                                    <input type="number" class="form-control w-100" id="exportAmount" placeholder="수출 금액 입력" t-att-value="state.formData.exportAmount" t-on-input="(ev) => this.handleInputChange('exportAmount', ev.target.value)"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="freightCost" class="form-label text-sm font-medium">
+                                        운임비 (USD)
+                                    </label>
+                                    <input type="number" class="form-control w-100" id="freightCost" placeholder="운임비 입력" t-att-value="state.formData.freightCost" t-on-input="(ev) => this.handleInputChange('freightCost', ev.target.value)"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="insurance" class="form-label text-sm font-medium">
+                                        보험료 (USD)
+                                    </label>
+                                    <input type="number" class="form-control w-100" id="insurance" placeholder="보험료 입력" t-att-value="state.formData.insurance" t-on-input="(ev) => this.handleInputChange('insurance', ev.target.value)"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 안내사항 -->
+                        <div class="alert alert-warning">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <div class="w-2 h-2 bg-warning rounded-circle mt-2"></div>
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="alert-heading text-warning">안내사항</h6>
+                                    <ul class="mb-0 text-warning-dark">
+                                        <li>모든 필수 항목(*)을 정확히 입력해주세요.</li>
+                                        <li>수입등록번호는 보관을 위해 입력하시기 바랍니다.</li>
+                                        <li>면장 처리 후에는 면장 발급 단계로 진행됩니다.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 버튼 영역 -->
+                        <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                            <button type="submit" class="btn btn-primary flex-fill me-3">
+                                <i class="fa fa-save me-2"></i>면장 정보 저장
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" t-on-click="resetForm">
+                                초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </t>
 

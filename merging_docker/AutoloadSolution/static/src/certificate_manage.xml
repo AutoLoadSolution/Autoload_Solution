@@ -3,25 +3,216 @@
 
     <!-- 면장관리 페이지 -->
     <t t-name="AutoloadSolution.CertificateManage">
-        <div class="certificate-manage-page">
-            <h1>면장관리 페이지입니다</h1>
-            <p>이 페이지에서는 기존 면장들을 관리할 수 있습니다.</p>
-            <div class="alert alert-success">
-                <strong>면장관리:</strong> 등록된 면장을 조회, 수정, 삭제하는 기능입니다.
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>면장 목록</h5>
+        <!-- 상단 헤더 영역 -->
+        <div class="bg-white border-bottom border-gray-200 mb-4 certificate_header">
+                <div class="container-fluid px-4 py-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="fa fa-file-text text-primary" style="font-size: 1.5rem;"></i>
+                                <div>
+                                    <h1 class="h5 fw-semibold text-dark mb-1">면장 관리</h1>
+                                    <p class="text-sm text-muted mb-0">등록된 면장을 조회하고 관리할 수 있습니다.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <p>면장 목록 테이블이 여기에 표시됩니다.</p>
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            <button type="button" class="btn btn-primary d-flex align-items-center gap-2" t-on-click="handlePhotoRegistration">
+                                <i class="fa fa-camera" style="font-size: 1rem;"></i>
+                                사진으로 업로드하기
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="px-4 px-md-6 px-lg-7" style="max-width: 1400px; margin: 0 auto;">
+                <div class="row g-4">
+                    <!-- 검색 패널 -->
+                    <div class="col-12 col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-gray-50 border-bottom">
+                                <h5 class="card-title text-lg font-semibold text-dark d-flex align-items-center mb-0">
+                                    <i class="fa fa-search text-primary me-2"></i>
+                                    검색 조건
+                                </h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="space-y-3">
+                                    <!-- 기준일자 -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm font-medium">기준일자</label>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <input type="date" class="form-control form-control-sm" 
+                                                       t-att-value="state.searchCriteria.startDate" 
+                                                       t-on-input="(ev) => this.handleSearchInputChange('startDate', ev.target.value)"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="date" class="form-control form-control-sm" 
+                                                       t-att-value="state.searchCriteria.endDate" 
+                                                       t-on-input="(ev) => this.handleSearchInputChange('endDate', ev.target.value)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Invoice No -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm font-medium">Invoice No</label>
+                                        <input type="text" class="form-control form-control-sm" 
+                                               placeholder="Invoice 번호 입력" 
+                                               t-att-value="state.searchCriteria.invoiceNo" 
+                                               t-on-input="(ev) => this.handleSearchInputChange('invoiceNo', ev.target.value)"/>
+                                    </div>
+
+                                    <!-- 거래유형별 -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm font-medium">거래유형별</label>
+                                        <select class="form-control form-control-sm" 
+                                                t-att-value="state.searchCriteria.transactionType" 
+                                                t-on-input="(ev) => this.handleSearchInputChange('transactionType', ev.target.value)">
+                                            <option value="">거래유형 선택</option>
+                                            <option value="수출">수출</option>
+                                            <option value="수입">수입</option>
+                                            <option value="내수">내수</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 창고별 -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm font-medium">창고별</label>
+                                        <input type="text" class="form-control form-control-sm" 
+                                               placeholder="창고명 입력" 
+                                               t-att-value="state.searchCriteria.warehouse" 
+                                               t-on-input="(ev) => this.handleSearchInputChange('warehouse', ev.target.value)"/>
+                                    </div>
+
+                                    <!-- 거래처별 -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm font-medium">거래처별</label>
+                                        <input type="text" class="form-control form-control-sm" 
+                                               placeholder="거래처명 입력" 
+                                               t-att-value="state.searchCriteria.client" 
+                                               t-on-input="(ev) => this.handleSearchInputChange('client', ev.target.value)"/>
+                                    </div>
+
+                                    <!-- 품목별 -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm font-medium">품목별</label>
+                                        <input type="text" class="form-control form-control-sm" 
+                                               placeholder="품목명 입력" 
+                                               t-att-value="state.searchCriteria.item" 
+                                               t-on-input="(ev) => this.handleSearchInputChange('item', ev.target.value)"/>
+                                    </div>
+
+                                    <!-- 타입별 -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm font-medium">타입별</label>
+                                        <input type="text" class="form-control form-control-sm" 
+                                               placeholder="타입 입력" 
+                                               t-att-value="state.searchCriteria.type" 
+                                               t-on-input="(ev) => this.handleSearchInputChange('type', ev.target.value)"/>
+                                    </div>
+
+                                    <!-- 직접검색 -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm font-medium">직접검색</label>
+                                        <input type="text" class="form-control form-control-sm" 
+                                               placeholder="통합 검색어 입력" 
+                                               t-att-value="state.searchCriteria.directSearch" 
+                                               t-on-input="(ev) => this.handleSearchInputChange('directSearch', ev.target.value)"/>
+                                    </div>
+
+                                    <!-- 검색 버튼 -->
+                                    <button type="button" class="btn btn-primary w-100" t-on-click="handleSearch">
+                                        <i class="fa fa-search me-2"></i>
+                                        검색
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 결과 패널 -->
+                    <div class="col-12 col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-gray-50 border-bottom">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title text-lg font-semibold text-dark mb-0">
+                                        면장 목록 (<t t-esc="state.filteredData.length"/>건)
+                                    </h5>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="select-all" 
+                                                   t-att-checked="state.selectedItems.length === state.filteredData.length and state.filteredData.length > 0"
+                                                   t-on-input="handleSelectAll"/>
+                                            <label class="form-check-label text-sm font-medium text-muted" for="select-all">
+                                                전체 선택
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center" style="width: 50px;">선택</th>
+                                                <th class="text-center">일자</th>
+                                                <th class="text-center">Invoice No</th>
+                                                <th class="text-center">거래처</th>
+                                                <th class="text-center">창고</th>
+                                                <th class="text-center">거래유형</th>
+                                                <th class="text-center">바이어명</th>
+                                                <th class="text-center">목적국</th>
+                                                <th class="text-center">수출금액</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="state.filteredData" t-as="item" t-key="item.id">
+                                                <tr t-att-class="item_index % 2 === 0 ? 'table-light' : ''">
+                                                    <td class="text-center">
+                                                        <div class="form-check d-flex justify-content-center">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                                   t-att-checked="state.selectedItems.includes(item.id)"
+                                                                   t-on-input="() => this.handleSelectItem(item.id)"/>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center text-sm"><t t-esc="item.date"/></td>
+                                                    <td class="text-center text-sm font-medium text-primary"><t t-esc="item.invoiceNo"/></td>
+                                                    <td class="text-center text-sm"><t t-esc="item.client"/></td>
+                                                    <td class="text-center text-sm"><t t-esc="item.warehouse"/></td>
+                                                    <td class="text-center">
+                                                        <span class="badge bg-success text-white">
+                                                            <t t-esc="item.transactionType"/>
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-center text-sm"><t t-esc="item.buyerName"/></td>
+                                                    <td class="text-center text-sm"><t t-esc="item.destinationCountry"/></td>
+                                                    <td class="text-center text-sm font-medium">
+                                                        <t t-esc="item.exportAmount"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 하단 액션 버튼 -->
+                        <div class="mt-4 d-flex justify-content-end">
+                            <button type="button" class="btn btn-success" 
+                                    t-att-disabled="state.selectedItems.length === 0"
+                                    t-on-click="handleSendToCustomsBroker">
+                                <i class="fa fa-paper-plane me-2"></i>
+                                관세사님한테 보내기 (<t t-esc="state.selectedItems.length"/>건)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </t>
 
 </templates> 
