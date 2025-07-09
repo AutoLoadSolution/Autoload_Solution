@@ -1,0 +1,28 @@
+name: Deploy to GCP VM
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 push될 때 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: SSH to GCP and deploy
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: 34.22.94.128
+        username: kirum1121
+        key: ${{ secrets.GCP_DEPLOY_KEY }}
+        port: 22
+        script: |
+          cd /home/kirum1121/odoo_FE/merging_docker
+          git pull origin main
+          docker-compose down
+          docker-compose build --no-cache
+          docker-compose up -d
