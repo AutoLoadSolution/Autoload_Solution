@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <!-- 면장생성 페이지 -->
+    <t t-name="AutoloadSolution.CertificateCreate">
+        <div class="certificate-create-page">
+            <h1>면장생성 페이지입니다</h1>
+            <p>이 페이지에서는 새로운 면장을 생성할 수 있습니다.</p>
+            <div class="alert alert-info">
+                <strong>면장생성:</strong> 새로운 면장을 작성하고 등록하는 기능입니다.
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>면장 정보 입력</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>면장 생성 폼이 여기에 표시됩니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- 면장관리 페이지 -->
+    <t t-name="AutoloadSolution.CertificateManage">
+        <div class="certificate-manage-page">
+            <h1>면장관리 페이지입니다</h1>
+            <p>이 페이지에서는 기존 면장들을 관리할 수 있습니다.</p>
+            <div class="alert alert-success">
+                <strong>면장관리:</strong> 등록된 면장을 조회, 수정, 삭제하는 기능입니다.
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>면장 목록</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>면장 목록 테이블이 여기에 표시됩니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- 말소생성 페이지 -->
+    <t t-name="AutoloadSolution.CancelCreate">
+        <div class="cancel-create-page">
+            <h1>말소생성 페이지입니다</h1>
+            <p>이 페이지에서는 새로운 말소 신청서를 생성할 수 있습니다.</p>
+            <div class="alert alert-warning">
+                <strong>말소생성:</strong> 면장 말소 신청서를 작성하는 기능입니다.
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>말소 신청서 작성</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>말소 신청서 폼이 여기에 표시됩니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- 말소관리 페이지 -->
+    <t t-name="AutoloadSolution.CancelManage">
+        <div class="cancel-manage-page">
+            <h1>말소관리 페이지입니다</h1>
+            <p>이 페이지에서는 말소 신청서들을 관리할 수 있습니다.</p>
+            <div class="alert alert-danger">
+                <strong>말소관리:</strong> 말소 신청서를 조회, 처리, 관리하는 기능입니다.
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>말소 신청서 목록</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>말소 신청서 목록 테이블이 여기에 표시됩니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates> 
