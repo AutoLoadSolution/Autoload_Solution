@@ -11,16 +11,15 @@
     "author": "My Company",
     "website": "https://www.mycompany.com",
     "icon": "/my_app/static/description/icon.png",
-    "depends": ["base", "mail"],
+    "depends": ["base", "web"],
     "data": [
-        "security/security.xml",
-        "security/ir.model.access.csv",
         "views/views.xml",
-        "views/menu.xml",
     ],
-    "demo": [
-        "demo/demo.xml",
-    ],
+    "assets": {
+        "web.assets_backend": [
+            "my_app/static/src/**/*",
+        ],
+    },
     "installable": True,
     "application": True,
     "auto_install": False,
