@@ -1,27 +1,370 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-
-    <!-- 말소관리 페이지 -->
     <t t-name="AutoloadSolution.CancelManage">
-        <div class="cancel-manage-page">
-            <h1>말소관리 페이지입니다</h1>
-            <p>이 페이지에서는 말소 신청서들을 관리할 수 있습니다.</p>
-            <div class="alert alert-danger">
-                <strong>말소관리:</strong> 말소 신청서를 조회, 처리, 관리하는 기능입니다.
+        <!-- 상단 안내 및 통계 -->
+        <div class="bg-white border-bottom border-gray-200 mb-4">
+            <div class="container-fluid px-4 py-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fa fa-database text-primary" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h1 class="h5 fw-semibold text-dark mb-1">말소 관리</h1>
+                                <p class="text-sm text-muted mb-0">말소 신청서 현황을 조회, 관리할 수 있습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="px-4 px-md-6 px-lg-7" style="max-width: 1200px; margin: 0 auto;">
+            <!-- 상단 통계 요약 -->
+            <div class="mb-6 row">
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <p class="text-sm text-muted mb-1">전체 말소</p>
+                                    <p class="h3 fw-bold mb-0 text-dark"><t t-esc="data.length"/></p>
+                                </div>
+                                <i class="fa fa-database text-primary" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <p class="text-sm text-muted mb-1">완료</p>
+                                    <p class="h3 fw-bold mb-0" style="color: #22c55e;"> <t t-esc="data.filter(item => item.status === '완료').length"/> </p>
+                                </div>
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:32px;height:32px;background:#d1fadf;">
+                                    <div style="width:16px;height:16px;background:#22c55e;border-radius:50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <p class="text-sm text-muted mb-1">진행중</p>
+                                    <p class="h3 fw-bold mb-0" style="color: #2563eb;"> <t t-esc="data.filter(item => item.status === '진행중').length"/> </p>
+                                </div>
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:32px;height:32px;background:#dbeafe;">
+                                    <div style="width:16px;height:16px;background:#2563eb;border-radius:50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <p class="text-sm text-muted mb-1">대기</p>
+                                    <p class="h3 fw-bold mb-0" style="color: #eab308;"> <t t-esc="data.filter(item => item.status === '대기').length"/> </p>
+                                </div>
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:32px;height:32px;background:#fef9c3;">
+                                    <div style="width:16px;height:16px;background:#eab308;border-radius:50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>말소 신청서 목록</h5>
+                <!-- 왼쪽: 검색 필터 (3/12 너비) -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0 d-flex align-items-center gap-2 text-white">
+                                <i class="fa fa-search"></i>
+                                말소 데이터 검색
+                            </h5>
+                            <p class="text-sm mb-0" style="color: #e0e7ff;">조건을 설정하여 말소 데이터를 필터링하세요.</p>
                         </div>
-                        <div class="card-body">
-                            <p>말소 신청서 목록 테이블이 여기에 표시됩니다.</p>
+                        <div class="card-body p-4">
+                            <!-- 기준일자 -->
+                            <div class="mb-3">
+                                <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
+                                    <i class="fa fa-calendar"></i>
+                                    기준일자
+                                </label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <label for="dateFrom" class="form-label text-xs text-muted">시작일</label>
+                                        <input 
+                                            type="date" 
+                                            class="form-control form-control-sm" 
+                                            id="dateFrom"
+                                            t-att-value="state.dateFrom"
+                                            t-on-input="(ev) => this.handleInputChange('dateFrom', ev.target.value)"
+                                        />
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="dateTo" class="form-label text-xs text-muted">종료일</label>
+                                        <input 
+                                            type="date" 
+                                            class="form-control form-control-sm" 
+                                            id="dateTo"
+                                            t-att-value="state.dateTo"
+                                            t-on-input="(ev) => this.handleInputChange('dateTo', ev.target.value)"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 창고별 -->
+                            <div class="mb-3">
+                                <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
+                                    <i class="fa fa-building"></i>
+                                    창고별
+                                </label>
+                                <select 
+                                    class="form-select form-select-sm" 
+                                    t-att-value="state.warehouse"
+                                    t-on-change="(ev) => this.handleInputChange('warehouse', ev.target.value)"
+                                >
+                                    <option value="">창고를 선택하세요</option>
+                                    <option value="all">전체</option>
+                                    <option value="서울창고">서울창고</option>
+                                    <option value="부산창고">부산창고</option>
+                                    <option value="대구창고">대구창고</option>
+                                    <option value="광주창고">광주창고</option>
+                                    <option value="인천창고">인천창고</option>
+                                </select>
+                            </div>
+                            <!-- 거래처별 -->
+                            <div class="mb-3">
+                                <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
+                                    <i class="fa fa-users"></i>
+                                    거래처별
+                                </label>
+                                <select 
+                                    class="form-select form-select-sm" 
+                                    t-att-value="state.dealer"
+                                    t-on-change="(ev) => this.handleInputChange('dealer', ev.target.value)"
+                                >
+                                    <option value="">거래처를 선택하세요</option>
+                                    <option value="all">전체</option>
+                                    <option value="현대자동차">현대자동차</option>
+                                    <option value="기아자동차">기아자동차</option>
+                                    <option value="쌍용자동차">쌍용자동차</option>
+                                    <option value="토요타">토요타</option>
+                                    <option value="테슬라">테슬라</option>
+                                </select>
+                            </div>
+                            <!-- 품목별 -->
+                            <div class="mb-3">
+                                <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
+                                    <i class="fa fa-box"></i>
+                                    품목별
+                                </label>
+                                <select 
+                                    class="form-select form-select-sm" 
+                                    t-att-value="state.category"
+                                    t-on-change="(ev) => this.handleInputChange('category', ev.target.value)"
+                                >
+                                    <option value="">품목을 선택하세요</option>
+                                    <option value="all">전체</option>
+                                    <option value="승용차">승용차</option>
+                                    <option value="SUV">SUV</option>
+                                    <option value="하이브리드">하이브리드</option>
+                                    <option value="전기차">전기차</option>
+                                </select>
+                            </div>
+                            <!-- 검색어 -->
+                            <div class="mb-3">
+                                <label for="searchTerm" class="form-label text-sm fw-medium mb-2">
+                                    검색어 (차량번호, 소유자명, 차대번호)
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control form-control-sm" 
+                                    id="searchTerm"
+                                    placeholder="검색어를 입력하세요"
+                                    t-att-value="state.searchTerm"
+                                    t-on-input="(ev) => this.handleInputChange('searchTerm', ev.target.value)"
+                                />
+                            </div>
+                            <button 
+                                type="button" 
+                                class="btn btn-primary btn-sm w-100" 
+                                t-on-click="handleReset"
+                            >
+                                <i class="fa fa-refresh me-2"></i>
+                                초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- 오른쪽: 전체 말소 현황 (9/12 너비) -->
+                <div class="col-lg-9">
+                    <div class="card shadow-lg h-100">
+                        <div class="card-header bg-primary text-white">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa fa-database"></i>
+                                    말소 현황
+                                </div>
+                                <span class="badge" style="background-color: #e0e7ff; color: #2563eb;">
+                                    <t t-esc="sortedData.length"/>건 / 전체 <t t-esc="data.length"/>건
+                                </span>
+                            </div>
+                            <p class="text-sm mb-0" style="color: #e0e7ff;">
+                                <t t-if="filteredData.length === data.length">
+                                    전체 말소 데이터를 정렬하여 확인할 수 있습니다.
+                                </t>
+                                <t t-else="">
+                                    필터링된 말소 데이터를 확인할 수 있습니다.
+                                </t>
+                            </p>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive" style="overflow-y: auto; overflow-x: auto; width: 100%;">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light sticky-top">
+                                        <tr>
+                                            <th class="w-16">ID</th>
+                                            <th>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                    t-on-click="() => this.handleSort('date')"
+                                                >
+                                                    일자
+                                                    <i class="fa fa-sort ms-1"></i>
+                                                </button>
+                                            </th>
+                                            <th>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                    t-on-click="() => this.handleSort('vehicleNumber')"
+                                                >
+                                                    차량번호
+                                                    <i class="fa fa-sort ms-1"></i>
+                                                </button>
+                                            </th>
+                                            <th>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                    t-on-click="() => this.handleSort('ownerName')"
+                                                >
+                                                    소유자
+                                                    <i class="fa fa-sort ms-1"></i>
+                                                </button>
+                                            </th>
+                                            <th>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                    t-on-click="() => this.handleSort('warehouse')"
+                                                >
+                                                    창고
+                                                    <i class="fa fa-sort ms-1"></i>
+                                                </button>
+                                            </th>
+                                            <th>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                    t-on-click="() => this.handleSort('dealer')"
+                                                >
+                                                    거래처
+                                                    <i class="fa fa-sort ms-1"></i>
+                                                </button>
+                                            </th>
+                                            <th>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                    t-on-click="() => this.handleSort('category')"
+                                                >
+                                                    품목
+                                                    <i class="fa fa-sort ms-1"></i>
+                                                </button>
+                                            </th>
+                                            <th>상태</th>
+                                            <th class="text-center">발급</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-if="sortedData.length === 0">
+                                            <tr>
+                                                <td colspan="9" class="text-center py-4 text-muted">
+                                                    검색 조건에 맞는 데이터가 없습니다.
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-foreach="sortedData" t-as="item" t-key="item.id">
+                                                <tr>
+                                                    <td class="fw-medium"><t t-esc="item.id"/></td>
+                                                    <td class="text-sm"><t t-esc="item.date"/></td>
+                                                    <td class="fw-medium"><t t-esc="item.vehicleNumber"/></td>
+                                                    <td><t t-esc="item.ownerName"/></td>
+                                                    <td>
+                                                        <span class="badge bg-outline-secondary text-xs">
+                                                            <t t-esc="item.warehouse"/>
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-sm"><t t-esc="item.dealer"/></td>
+                                                    <td>
+                                                        <span class="badge bg-outline-secondary text-xs">
+                                                            <t t-esc="item.category"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="item.status === '완료'">
+                                                            <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded" style="background:#d1fadf;color:#22c55e;font-weight:600;">
+                                                                <span style="width:12px;height:12px;background:#22c55e;border-radius:50%;display:inline-block;"></span>
+                                                                완료
+                                                            </span>
+                                                        </t>
+                                                        <t t-elif="item.status === '진행중'">
+                                                            <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded" style="background:#dbeafe;color:#2563eb;font-weight:600;">
+                                                                <span style="width:12px;height:12px;background:#2563eb;border-radius:50%;display:inline-block;"></span>
+                                                                진행중
+                                                            </span>
+                                                        </t>
+                                                        <t t-elif="item.status === '대기'">
+                                                            <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded" style="background:#fef9c3;color:#eab308;font-weight:600;">
+                                                                <span style="width:12px;height:12px;background:#eab308;border-radius:50%;display:inline-block;"></span>
+                                                                대기
+                                                            </span>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span class="badge bg-secondary"><t t-esc="item.status"/></span>
+                                                        </t>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-outline-primary btn-sm" 
+                                                            t-on-click="() => this.handleIssueCertificate(item)"
+                                                        >
+                                                            <i class="fa fa-file-text me-1"></i>
+                                                            신청서 발급
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </t>
-
 </templates> 
