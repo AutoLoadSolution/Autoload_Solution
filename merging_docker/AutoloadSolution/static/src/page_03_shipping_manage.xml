@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="AutoloadSolution.Page03ShippingManage" owl="1">
+        <div class="shipping-manage-page">
+            <!-- 헤더 -->
+            <div class="page-header">
+                <h1>선적관리</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" t-on-click="navigateToCreate">
+                        <i class="fa fa-plus"></i>
+                        선적 신청
+                    </button>
+                </div>
+            </div>
+
+            <!-- 검색 및 필터 -->
+            <div class="search-filter-section">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        placeholder="선적번호, 고객명, 차량번호로 검색..."
+                        t-model="state.searchTerm"
+                        t-on-input="handleSearchChange"
+                    />
+                </div>
+                <div class="filter-box">
+                    <select class="form-control" t-model="state.selectedStatus" t-on-change="handleStatusChange">
+                        <option value="all">전체 상태</option>
+                        <option value="pending">대기중</option>
+                        <option value="processing">처리중</option>
+                        <option value="completed">완료</option>
+                        <option value="cancelled">취소</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 데이터 테이블 -->
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>선적번호</th>
+                            <th>고객명</th>
+                            <th>차량번호</th>
+                            <th>선적일자</th>
+                            <th>상태</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-if="state.isLoading">
+                            <tr>
+                                <td colspan="6" class="text-center">데이터를 불러오는 중...</td>
+                            </tr>
+                        </t>
+                        <t t-elif="filteredData.length === 0">
+                            <tr>
+                                <td colspan="6" class="text-center">등록된 선적이 없습니다.</td>
+                            </tr>
+                        </t>
+                        <t t-else="">
+                            <t t-foreach="filteredData" t-as="shipping" t-key="shipping.id">
+                                <tr>
+                                    <td>
+                                        <span class="shipping-number" t-on-click="() => this.viewShippingDetail(shipping.id)">
+                                            <t t-esc="shipping.shippingNumber"/>
+                                        </span>
+                                    </td>
+                                    <td><t t-esc="shipping.customerName"/></td>
+                                    <td><t t-esc="shipping.vehicleNumber"/></td>
+                                    <td><t t-esc="shipping.shippingDate"/></td>
+                                    <td>
+                                        <span t-attf-class="status-badge #{getStatusClass(shipping.status)}">
+                                            <t t-esc="getStatusText(shipping.status)"/>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-info" t-on-click="() => this.viewShippingDetail(shipping.id)">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" t-on-click="() => this.deleteShipping(shipping.id)">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 통계 정보 -->
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-number"><t t-esc="state.shippingData.length"/></div>
+                    <div class="stat-label">전체 선적</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <t t-esc="state.shippingData.filter(s => s.status === 'pending').length"/>
+                    </div>
+                    <div class="stat-label">대기중</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <t t-esc="state.shippingData.filter(s => s.status === 'processing').length"/>
+                    </div>
+                    <div class="stat-label">처리중</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <t t-esc="state.shippingData.filter(s => s.status === 'completed').length"/>
+                    </div>
+                    <div class="stat-label">완료</div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates> 

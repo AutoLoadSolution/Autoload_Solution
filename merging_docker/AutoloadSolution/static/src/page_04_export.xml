@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="AutoloadSolution.Page04Export" owl="1">
+        <div class="export-page">
+            <!-- 헤더 -->
+            <div class="page-header">
+                <h1>수출관리</h1>
+                <div class="header-actions">
+                    <button class="btn btn-success" t-on-click="downloadExcel">
+                        <i class="fa fa-download"></i>
+                        엑셀 다운로드
+                    </button>
+                    <button class="btn btn-primary" t-on-click="navigateToCreate">
+                        <i class="fa fa-plus"></i>
+                        수출 신청
+                    </button>
+                </div>
+            </div>
+
+            <!-- 검색 및 필터 -->
+            <div class="search-filter-section">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        placeholder="수출번호, 고객명, 제품명으로 검색..."
+                        t-model="state.searchTerm"
+                        t-on-input="handleSearchChange"
+                    />
+                </div>
+                <div class="filter-box">
+                    <select class="form-control" t-model="state.selectedType" t-on-change="handleTypeChange">
+                        <option value="all">전체 타입</option>
+                        <option value="vehicle">차량</option>
+                        <option value="parts">부품</option>
+                        <option value="machinery">기계</option>
+                        <option value="other">기타</option>
+                    </select>
+                </div>
+                <div class="filter-box">
+                    <select class="form-control" t-model="state.selectedStatus" t-on-change="handleStatusChange">
+                        <option value="all">전체 상태</option>
+                        <option value="pending">대기중</option>
+                        <option value="approved">승인됨</option>
+                        <option value="shipped">선적완료</option>
+                        <option value="delivered">인도완료</option>
+                        <option value="cancelled">취소</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 데이터 테이블 -->
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>수출번호</th>
+                            <th>고객명</th>
+                            <th>제품명</th>
+                            <th>수출타입</th>
+                            <th>수량</th>
+                            <th>금액</th>
+                            <th>상태</th>
+                            <th>수출일자</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-if="state.isLoading">
+                            <tr>
+                                <td colspan="9" class="text-center">데이터를 불러오는 중...</td>
+                            </tr>
+                        </t>
+                        <t t-elif="filteredData.length === 0">
+                            <tr>
+                                <td colspan="9" class="text-center">등록된 수출이 없습니다.</td>
+                            </tr>
+                        </t>
+                        <t t-else="">
+                            <t t-foreach="filteredData" t-as="export" t-key="export.id">
+                                <tr>
+                                    <td>
+                                        <span class="export-number" t-on-click="() => this.viewExportDetail(export.id)">
+                                            <t t-esc="export.exportNumber"/>
+                                        </span>
+                                    </td>
+                                    <td><t t-esc="export.customerName"/></td>
+                                    <td><t t-esc="export.productName"/></td>
+                                    <td><t t-esc="getExportTypeText(export.exportType)"/></td>
+                                    <td><t t-esc="export.quantity"/></td>
+                                    <td><t t-esc="export.amount"/></td>
+                                    <td>
+                                        <span t-attf-class="status-badge #{getStatusClass(export.status)}">
+                                            <t t-esc="getStatusText(export.status)"/>
+                                        </span>
+                                    </td>
+                                    <td><t t-esc="export.exportDate"/></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-info" t-on-click="() => this.viewExportDetail(export.id)">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" t-on-click="() => this.deleteExport(export.id)">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 통계 정보 -->
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-number"><t t-esc="state.exportData.length"/></div>
+                    <div class="stat-label">전체 수출</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <t t-esc="state.exportData.filter(e => e.status === 'pending').length"/>
+                    </div>
+                    <div class="stat-label">대기중</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <t t-esc="state.exportData.filter(e => e.status === 'approved').length"/>
+                    </div>
+                    <div class="stat-label">승인됨</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <t t-esc="state.exportData.filter(e => e.status === 'delivered').length"/>
+                    </div>
+                    <div class="stat-label">인도완료</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <t t-esc="state.exportData.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0).toLocaleString()"/>
+                    </div>
+                    <div class="stat-label">총 수출금액</div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates> 

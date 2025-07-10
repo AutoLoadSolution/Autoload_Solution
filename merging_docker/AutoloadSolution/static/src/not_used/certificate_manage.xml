@@ -209,10 +209,10 @@
                                 <i class="fa fa-paper-plane me-2"></i>
                                 관세사님한테 보내기 (<t t-esc="state.selectedItems.length"/>건)
                             </button>
-                        </div>
                     </div>
                 </div>
             </div>
+        </div>
     </t>
 
 </templates> 

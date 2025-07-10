@@ -1,34 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
   <data>
-    <!-- 면장생성 액션 -->
-    <record model="ir.actions.client" id="action_certificate_create">
-      <field name="name">면장생성</field>
-      <field name="tag">AutoloadSolution.certificate_create</field>
-    </record>
-
-    <!-- 면장관리 액션 -->
-    <record model="ir.actions.client" id="action_certificate_manage">
-      <field name="name">면장관리</field>
-      <field name="tag">AutoloadSolution.certificate_manage</field>
-    </record>
-
-    <!-- 말소생성 액션 -->
+      <!-- 말소신청 액션 -->
     <record model="ir.actions.client" id="action_cancel_create">
-      <field name="name">말소생성</field>
+      <field name="name">말소신청</field>
       <field name="tag">AutoloadSolution.cancel_create</field>
     </record>
 
-    <!-- 말소관리 액션 -->
+    <!-- 말소조회 액션 -->
     <record model="ir.actions.client" id="action_cancel_manage">
-      <field name="name">말소관리</field>
+      <field name="name">말소조회</field>
       <field name="tag">AutoloadSolution.cancel_manage</field>
     </record>
 
+    <!-- 선적관리 액션 -->
+    <record model="ir.actions.client" id="action_shipping_manage">
+      <field name="name">선적관리</field>
+      <field name="tag">AutoloadSolution.shipping_manage</field>
+    </record>
+
+    <!-- 수출 액션 -->
+    <record model="ir.actions.client" id="action_export">
+      <field name="name">수출</field>
+      <field name="tag">AutoloadSolution.export</field>
+    </record>
+
     <menuitem name="AutoloadSolution" id="AutoloadSolution.menu_root" groups="base.group_user" web_icon="AutoloadSolution,static/description/icon.png"/>
-    <menuitem name="면장생성" id="AutoloadSolution.menu_certificate_create" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_certificate_create" sequence="3"/>
-    <menuitem name="면장관리" id="AutoloadSolution.menu_certificate_manage" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_certificate_manage" sequence="4"/>
-    <menuitem name="말소생성" id="AutoloadSolution.menu_cancel_create" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_cancel_create" sequence="1"/>
-    <menuitem name="말소관리" id="AutoloadSolution.menu_cancel_manage" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_cancel_manage" sequence="2"/>
+    
+    <!-- 말소신청 메뉴 -->
+    <menuitem name="말소신청" id="AutoloadSolution.menu_cancel_create" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_cancel_create" sequence="1"/>
+    
+    <!-- 말소조회 메뉴 -->
+    <menuitem name="말소조회" id="AutoloadSolution.menu_cancel_manage" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_cancel_manage" sequence="2"/>
+    
+    <!-- 선적관리 메뉴 -->
+    <menuitem name="선적관리" id="AutoloadSolution.menu_shipping_manage" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_shipping_manage" sequence="3"/>
+    
+    <!-- 수출 메뉴 -->
+    <menuitem name="수출" id="AutoloadSolution.menu_export" parent="AutoloadSolution.menu_root" action="AutoloadSolution.action_export" sequence="4"/>
   </data>
-</odoo> 
+</odoo>
