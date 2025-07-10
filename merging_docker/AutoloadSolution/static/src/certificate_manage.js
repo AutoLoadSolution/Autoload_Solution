@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component } from "@odoo/owl";
+import { Component, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 
 class CertificateManage extends Component {
@@ -80,8 +80,8 @@ class CertificateManage extends Component {
             },
         ];
 
-        // 상태 초기화
-        this.state = {
+        // useState를 사용하여 반응형 상태 관리
+        this.state = useState({
             searchCriteria: {
                 startDate: "",
                 endDate: "",
@@ -95,13 +95,12 @@ class CertificateManage extends Component {
             },
             filteredData: this.mockExemptionData,
             selectedItems: [],
-        };
+        });
     }
 
     // 검색 조건 입력 처리
     handleSearchInputChange(field, value) {
         this.state.searchCriteria[field] = value;
-        this.render();
     }
 
     // 검색 실행
@@ -155,7 +154,6 @@ class CertificateManage extends Component {
 
         this.state.filteredData = filtered;
         this.state.selectedItems = []; // 검색 시 선택 항목 초기화
-        this.render();
     }
 
     // 개별 항목 선택/해제
@@ -165,7 +163,6 @@ class CertificateManage extends Component {
         } else {
             this.state.selectedItems = [...this.state.selectedItems, itemId];
         }
-        this.render();
     }
 
     // 전체 선택/해제
@@ -175,7 +172,6 @@ class CertificateManage extends Component {
         } else {
             this.state.selectedItems = this.state.filteredData.map(item => item.id);
         }
-        this.render();
     }
 
     // 관세사에게 전송
