@@ -94,7 +94,6 @@
                             <!-- 기준일자 -->
                             <div class="mb-3">
                                 <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
-                                    <i class="fa fa-calendar"></i>
                                     기준일자
                                 </label>
                                 <div class="row g-2">
@@ -123,7 +122,6 @@
                             <!-- 창고별 -->
                             <div class="mb-3">
                                 <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
-                                    <i class="fa fa-building"></i>
                                     창고별
                                 </label>
                                 <select 
@@ -143,7 +141,6 @@
                             <!-- 거래처별 -->
                             <div class="mb-3">
                                 <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
-                                    <i class="fa fa-users"></i>
                                     거래처별
                                 </label>
                                 <select 
@@ -163,7 +160,6 @@
                             <!-- 품목별 -->
                             <div class="mb-3">
                                 <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
-                                    <i class="fa fa-box"></i>
                                     품목별
                                 </label>
                                 <select 
