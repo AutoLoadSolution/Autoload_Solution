@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
     <t t-name="AutoloadSolution.CancelManage">
         <!-- 상단 안내 및 통계 -->
-        <div class="bg-white border-bottom border-gray-200 mb-4">
+        <div class="bg-white border-bottom border-gray-200 mb-4 cancel-manage-page">
             <div class="container-fluid px-4 py-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-4">
@@ -197,6 +197,14 @@
                                 <i class="fa fa-refresh me-2"></i>
                                 초기화
                             </button>
+                            <button 
+                                type="button" 
+                                class="btn btn-info btn-sm w-100 mt-2" 
+                                t-on-click="debugLocalStorage"
+                            >
+                                <i class="fa fa-database me-2"></i>
+                                데이터 확인
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -223,12 +231,12 @@
                             </p>
                         </div>
                         <div class="card-body p-0">
-                            <div class="table-responsive" style="overflow-y: auto; overflow-x: auto; width: 100%;">
-                                <table class="table table-hover mb-0">
-                                    <thead class="table-light sticky-top">
+                            <div class="table-responsive" style="overflow-x: auto; overflow-y: auto; max-height: 600px; width: 100%; border-radius: 0.375rem;">
+                                <table class="table table-hover mb-0" style="min-width: 1330px; white-space: nowrap; font-size: 0.875rem;">
+                                    <thead class="table-light sticky-top" style="position: sticky; top: 0; z-index: 1020; background-color: #f8f9fa;">
                                         <tr>
-                                            <th class="w-16">ID</th>
-                                            <th>
+                                            <th style="min-width: 90px; width: 90px;">ID</th>
+                                            <th style="min-width: 100px; width: 100px;">
                                                 <button 
                                                     type="button" 
                                                     class="btn btn-link btn-sm p-0 fw-medium text-primary" 
@@ -238,7 +246,7 @@
                                                     <i class="fa fa-sort ms-1"></i>
                                                 </button>
                                             </th>
-                                            <th>
+                                            <th style="min-width: 120px; width: 120px;">
                                                 <button 
                                                     type="button" 
                                                     class="btn btn-link btn-sm p-0 fw-medium text-primary" 
@@ -248,7 +256,7 @@
                                                     <i class="fa fa-sort ms-1"></i>
                                                 </button>
                                             </th>
-                                            <th>
+                                            <th style="min-width: 100px; width: 100px;">
                                                 <button 
                                                     type="button" 
                                                     class="btn btn-link btn-sm p-0 fw-medium text-primary" 
@@ -258,7 +266,7 @@
                                                     <i class="fa fa-sort ms-1"></i>
                                                 </button>
                                             </th>
-                                            <th>
+                                            <th style="min-width: 100px; width: 100px;">
                                                 <button 
                                                     type="button" 
                                                     class="btn btn-link btn-sm p-0 fw-medium text-primary" 
@@ -268,7 +276,7 @@
                                                     <i class="fa fa-sort ms-1"></i>
                                                 </button>
                                             </th>
-                                            <th>
+                                            <th style="min-width: 120px; width: 120px;">
                                                 <button 
                                                     type="button" 
                                                     class="btn btn-link btn-sm p-0 fw-medium text-primary" 
@@ -278,7 +286,17 @@
                                                     <i class="fa fa-sort ms-1"></i>
                                                 </button>
                                             </th>
-                                            <th>
+                                            <th style="min-width: 140px; width: 140px;">
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                    t-on-click="() => this.handleSort('chassisNumber')"
+                                                >
+                                                    차대번호
+                                                    <i class="fa fa-sort ms-1"></i>
+                                                </button>
+                                            </th>
+                                            <th style="min-width: 100px; width: 100px;">
                                                 <button 
                                                     type="button" 
                                                     class="btn btn-link btn-sm p-0 fw-medium text-primary" 
@@ -288,14 +306,15 @@
                                                     <i class="fa fa-sort ms-1"></i>
                                                 </button>
                                             </th>
-                                            <th>상태</th>
-                                            <th class="text-center">발급</th>
+                                            <th style="min-width: 100px; width: 100px;">상태</th>
+                                            <th style="min-width: 120px; width: 120px;" class="text-center">발급</th>
+                                            <th style="min-width: 150px; width: 150px;" class="text-center">관리</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <t t-if="sortedData.length === 0">
                                             <tr>
-                                                <td colspan="9" class="text-center py-4 text-muted">
+                                                <td colspan="11" class="text-center py-4 text-muted">
                                                     검색 조건에 맞는 데이터가 없습니다.
                                                 </td>
                                             </tr>
@@ -303,22 +322,23 @@
                                         <t t-else="">
                                             <t t-foreach="sortedData" t-as="item" t-key="item.id">
                                                 <tr>
-                                                    <td class="fw-medium"><t t-esc="item.id"/></td>
-                                                    <td class="text-sm"><t t-esc="item.date"/></td>
-                                                    <td class="fw-medium"><t t-esc="item.vehicleNumber"/></td>
-                                                    <td><t t-esc="item.ownerName"/></td>
-                                                    <td>
+                                                    <td class="fw-medium text-ellipsis" style="min-width: 90px; width: 90px; max-width: 90px;"><t t-esc="item.id"/></td>
+                                                    <td class="text-sm text-ellipsis" style="min-width: 100px; width: 100px; max-width: 100px;"><t t-esc="item.date"/></td>
+                                                    <td class="fw-medium text-ellipsis" style="min-width: 120px; width: 120px; max-width: 120px;"><t t-esc="item.vehicleNumber"/></td>
+                                                    <td class="text-ellipsis" style="min-width: 100px; width: 100px; max-width: 100px;"><t t-esc="item.ownerName"/></td>
+                                                    <td class="text-ellipsis" style="min-width: 100px; width: 100px; max-width: 100px;">
                                                         <span class="badge bg-outline-secondary text-xs">
                                                             <t t-esc="item.warehouse"/>
                                                         </span>
                                                     </td>
-                                                    <td class="text-sm"><t t-esc="item.dealer"/></td>
-                                                    <td>
+                                                    <td class="text-sm text-ellipsis" style="min-width: 120px; width: 120px; max-width: 120px;"><t t-esc="item.dealer"/></td>
+                                                    <td class="fw-medium text-ellipsis" style="min-width: 140px; width: 140px; max-width: 140px; font-family: monospace;"><t t-esc="item.chassisNumber"/></td>
+                                                    <td class="text-ellipsis" style="min-width: 100px; width: 100px; max-width: 100px;">
                                                         <span class="badge bg-outline-secondary text-xs">
                                                             <t t-esc="item.category"/>
                                                         </span>
                                                     </td>
-                                                    <td>
+                                                    <td class="text-ellipsis" style="min-width: 100px; width: 100px; max-width: 100px;">
                                                         <t t-if="item.status === '완료'">
                                                             <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded" style="background:#d1fadf;color:#22c55e;font-weight:600;">
                                                                 <span style="width:12px;height:12px;background:#22c55e;border-radius:50%;display:inline-block;"></span>
@@ -341,7 +361,7 @@
                                                             <span class="badge bg-secondary"><t t-esc="item.status"/></span>
                                                         </t>
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class="text-center" style="min-width: 120px; width: 120px; max-width: 120px;">
                                                         <button 
                                                             type="button" 
                                                             class="btn btn-outline-primary btn-sm" 
@@ -350,6 +370,50 @@
                                                             <i class="fa fa-file-text me-1"></i>
                                                             신청서 발급
                                                         </button>
+                                                    </td>
+                                                    <td class="text-center" style="min-width: 150px; width: 150px; max-width: 150px;">
+                                                        <div class="btn-group" role="group">
+                                                            <!-- 상태 변경 드롭다운 -->
+                                                            <div class="dropdown">
+                                                                <button 
+                                                                    class="btn btn-outline-light btn-sm dropdown-toggle" 
+                                                                    type="button" 
+                                                                    data-bs-toggle="dropdown" 
+                                                                    aria-expanded="false"
+                                                                    style="border-color: #dee2e6; color: #6c757d;"
+                                                                >
+                                                                    상태 변경
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" t-on-click.prevent="() => this.handleStatusChange(item.id, '대기')">
+                                                                            <span class="badge me-2" style="background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7;">대기</span> 대기로 변경
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" t-on-click.prevent="() => this.handleStatusChange(item.id, '진행중')">
+                                                                            <span class="badge me-2" style="background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;">진행중</span> 진행중으로 변경
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" t-on-click.prevent="() => this.handleStatusChange(item.id, '완료')">
+                                                                            <span class="badge me-2" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;">완료</span> 완료로 변경
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <!-- 삭제 버튼 (로컬 스토리지 데이터만) -->
+                                                            <t t-if="item.createdAt">
+                                                                <button 
+                                                                    type="button" 
+                                                                    class="btn btn-outline-danger btn-sm ms-1" 
+                                                                    t-on-click="() => this.handleDeleteItem(item.id)"
+                                                                    title="삭제"
+                                                                >
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </t>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             </t>

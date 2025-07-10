@@ -88,15 +88,29 @@
                                     <label for="residentNumber" class="form-label text-sm font-medium">
                                         주민등록번호 <span class="text-danger">*</span>
                                     </label>
-                                    <input 
-                                        type="password" 
-                                        class="form-control w-100" 
-                                        id="residentNumber"
-                                        placeholder="000000-0000000"
-                                        t-att-value="state.residentNumber"
-                                        t-on-input="(ev) => this.handleInputChange('residentNumber', ev.target.value)"
-                                        required="required"
-                                    />
+                                    <div class="input-group">
+                                        <input 
+                                            type="text" 
+                                            class="form-control" 
+                                            id="residentNumberFront"
+                                            placeholder="000000"
+                                            maxlength="6"
+                                            t-att-value="state.residentNumberFront"
+                                            t-on-input="(ev) => this.handleResidentNumberFront(ev.target.value)"
+                                            required="required"
+                                        />
+                                        <span class="input-group-text">-</span>
+                                        <input 
+                                            type="password" 
+                                            class="form-control" 
+                                            id="residentNumberBack"
+                                            placeholder="0000000"
+                                            maxlength="7"
+                                            t-att-value="state.residentNumberBack"
+                                            t-on-input="(ev) => this.handleResidentNumberBack(ev.target.value)"
+                                            required="required"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <div class="mt-4">

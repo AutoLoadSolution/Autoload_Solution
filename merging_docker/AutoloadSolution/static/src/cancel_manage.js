@@ -98,9 +98,22 @@ class CancelManage extends Component {
         });
     }
 
+    // 로컬 스토리지에서 데이터를 가져오는 메서드
+    getLocalStorageData() {
+        try {
+            const localData = JSON.parse(localStorage.getItem('cancelData') || '[]');
+            return localData;
+        } catch (error) {
+            console.error('로컬 스토리지 데이터 읽기 오류:', error);
+            return [];
+        }
+    }
+
     // XML에서 사용할 getter들
     get data() {
-        return sampleData;
+        // 샘플 데이터와 로컬 스토리지 데이터를 병합
+        const localData = this.getLocalStorageData();
+        return [...sampleData, ...localData];
     }
 
     get filteredData() {
@@ -163,6 +176,49 @@ class CancelManage extends Component {
 
     handleIssueCertificate(item) {
         alert(`${item.vehicleNumber} (${item.ownerName})의 자동차말소등록신청서를 발급합니다.`);
+    }
+
+    // 디버깅용: 로컬 스토리지 데이터 확인
+    debugLocalStorage() {
+        const localData = this.getLocalStorageData();
+        console.log('로컬 스토리지 데이터:', localData);
+        alert(`로컬 스토리지에 ${localData.length}개의 항목이 저장되어 있습니다.`);
+    }
+
+    // 로컬 스토리지 데이터 삭제 메서드
+    handleDeleteItem(itemId) {
+        if (confirm('정말로 이 항목을 삭제하시겠습니까?')) {
+            try {
+                const localData = this.getLocalStorageData();
+                const updatedData = localData.filter(item => item.id !== itemId);
+                localStorage.setItem('cancelData', JSON.stringify(updatedData));
+                
+                // 컴포넌트 강제 리렌더링
+                this.render();
+                alert('항목이 삭제되었습니다.');
+            } catch (error) {
+                console.error('데이터 삭제 오류:', error);
+                alert('삭제 중 오류가 발생했습니다.');
+            }
+        }
+    }
+
+    // 상태 변경 메서드
+    handleStatusChange(itemId, newStatus) {
+        try {
+            const localData = this.getLocalStorageData();
+            const updatedData = localData.map(item => 
+                item.id === itemId ? { ...item, status: newStatus } : item
+            );
+            localStorage.setItem('cancelData', JSON.stringify(updatedData));
+            
+            // 컴포넌트 강제 리렌더링
+            this.render();
+            alert('상태가 변경되었습니다.');
+        } catch (error) {
+            console.error('상태 변경 오류:', error);
+            alert('상태 변경 중 오류가 발생했습니다.');
+        }
     }
 }
 
