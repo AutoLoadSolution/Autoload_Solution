@@ -23,6 +23,20 @@ services:
     command: --dev=reload --log-level=debug --database=odoo_db --db_host=db --db_user=odoo_user --db_password=2400 --init=base
     networks:
       - odoo-net
+
+  doc_reader:
+    build: ./doc_reader
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./doc_reader:/app
+      - ./doc_reader/credentials:/app/credentials
+    environment:
+      - PYTHONPATH=/app
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/gcp.json
+    networks:
+      - odoo-net
+    restart: unless-stopped
 networks:
   odoo-net:
     name: odoo-net

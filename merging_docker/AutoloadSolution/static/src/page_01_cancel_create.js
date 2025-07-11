@@ -209,7 +209,7 @@ class CancelCreate extends Component {
             formData.append('form_type', 'apply');
             
             // API 호출
-            const response = await fetch('http://192.168.0.41:8000/ocr/upload', {
+            const response = await fetch('http://localhost:8000/ocr/upload', {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
@@ -262,7 +262,7 @@ class CancelCreate extends Component {
             console.error('XHR 타임아웃');
         };
         
-        xhr.open('POST', 'http://192.168.0.41:8000/ocr/upload', true);
+        xhr.open('POST', 'http://localhost:8000/ocr/upload', true);
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.timeout = 30000; // 30초 타임아웃
         

@@ -253,7 +253,7 @@ class CancelManage extends Component {
             };
 
             // 5. PDF 생성 요청
-            const pdfResponse = await fetch('http://192.168.0.41:8000/pdf/fill_form', {
+            const pdfResponse = await fetch('http://localhost:8000/pdf/fill_form', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
