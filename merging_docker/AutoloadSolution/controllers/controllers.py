@@ -55,23 +55,28 @@ class CancelVehicleController(http.Controller):
     # [3] 말소 등록된 vehicle_id에 대응하여 차량 세부 정보 입력 (인보이스 생성)
     @http.route('/autoloadsolution/vehicleinfo/create', type='json', auth='user')
     def register_vehicleinfo(self, **kwargs):
-        vehicle_id = kwargs.pop('vehicle_id', None)
+        vehicle_id = kwargs.get('vehicle_id', None)
+        if not vehicle_id:
+            return {'error': 'vehicle_id는 필수 입력입니다.'}
+        
         cancellation = request.env['autoloadsolution.cancellation'].sudo().search([
             ('vehicle_id', '=', vehicle_id)
         ], limit=1)
 
-        if not cancellation:
-            return {'error': 'vehicle_id not found'}
+        if cancellation:
+            # 중복 방지: 이미 해당 cancellation_id에 연결된 vehicleinfo가 존재하는지 확인
+            existing_vehicleinfo = request.env['autoloadsolution.vehicleinfo'].sudo().search([
+                ('cancellation_id', '=', cancellation.id)
+            ], limit=1)
 
-        # ✅ 중복 방지: 이미 해당 cancellation_id에 연결된 vehicleinfo가 존재하는지 확인
-        existing_vehicleinfo = request.env['autoloadsolution.vehicleinfo'].sudo().search([
-            ('cancellation_id', '=', cancellation.id)
-        ], limit=1)
+            if existing_vehicleinfo:
+                return {'error': '이미 등록된 인보이스입니다'}
 
-        if existing_vehicleinfo:
-            return {'error': '이미 등록된 인보이스입니다'}
+            kwargs['cancellation_id'] = cancellation.id
+        else:
+             # 연결된 cancellation이 없는 경우 => cancellation_id 없이 저장 (테스트용)
+            kwargs['cancellation_id'] = False
 
-        kwargs['cancellation_id'] = cancellation.id
         request.env['autoloadsolution.vehicleinfo'].sudo().create(kwargs)
         return {'status': '말소 인보이스 작성 완료'}
 

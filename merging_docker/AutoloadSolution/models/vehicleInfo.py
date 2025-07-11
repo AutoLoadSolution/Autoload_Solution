@@ -6,7 +6,8 @@ class VehicleInfo(models.Model):
     _description = 'Vehicle Info (차량 상세 정보)'
 
     cancellation_id = fields.Many2one(
-        'autoloadsolution.cancellation', string="말소 참조", required=True, ondelete='cascade')
+        'autoloadsolution.cancellation', string="말소 참조", required=False, ondelete='cascade')
+    
     vehicle_name = fields.Char(string="차량명", required=True)
     vehicle_year = fields.Integer(string="연식")
     quantity = fields.Integer(string="수량")
