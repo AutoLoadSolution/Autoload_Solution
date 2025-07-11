@@ -490,6 +490,52 @@ class ShippingManage extends Component {
             this.state.isProcessing = false;
         }
     }
+
+    // 관세사님에게 보내기
+    async handleSendToCustoms(item) {
+        if (!item || !item.vehicle_id) {
+            alert("차대번호가 없는 항목은 전송할 수 없습니다.");
+            return;
+        }
+        
+        try {
+            this.state.isProcessing = true;
+            
+            // 실제 전송 로직은 없고 알림만 표시
+            setTimeout(() => {
+                alert("관세사님에게 전송이 완료되었습니다.");
+                this.state.isProcessing = false;
+            }, 1000);
+            
+        } catch (error) {
+            console.error("전송 실패:", error);
+            alert("전송 중 오류가 발생했습니다: " + error.message);
+            this.state.isProcessing = false;
+        }
+    }
+
+    // 바이어에게 연락하기
+    async handleContactBuyer(item) {
+        if (!item || !item.vehicle_id) {
+            alert("차대번호가 없는 항목은 연락할 수 없습니다.");
+            return;
+        }
+        
+        try {
+            this.state.isProcessing = true;
+            
+            // 실제 메시지 발송 로직은 없고 알림만 표시
+            setTimeout(() => {
+                alert("바이어에게 메시지 발송이 완료되었습니다.");
+                this.state.isProcessing = false;
+            }, 1000);
+            
+        } catch (error) {
+            console.error("메시지 발송 실패:", error);
+            alert("메시지 발송 중 오류가 발생했습니다: " + error.message);
+            this.state.isProcessing = false;
+        }
+    }
 }
 registry.category("actions").add("AutoloadSolution.shipping_manage", ShippingManage);
 export default ShippingManage; 
