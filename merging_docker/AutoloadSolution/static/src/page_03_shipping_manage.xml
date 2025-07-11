@@ -1,120 +1,902 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-    <t t-name="AutoloadSolution.Page03ShippingManage" owl="1">
-        <div class="shipping-manage-page">
-            <!-- 헤더 -->
-            <div class="page-header">
-                <h1>선적관리</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary" t-on-click="navigateToCreate">
-                        <i class="fa fa-plus"></i>
-                        선적 신청
-                    </button>
+    <t t-name="AutoloadSolution.Page03ShippingManage">
+        <div class="shipping-manage-container" style="height: 100vh; display: flex; flex-direction: column; overflow: hidden;">
+            <!-- 상단 헤더 영역 (고정) -->
+            <div class="bg-white border-bottom border-gray-200" style="flex-shrink: 0; z-index: 10;">
+                <div class="container-fluid px-4 py-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="fa fa-ship text-primary" style="font-size: 1.5rem;"></i>
+                                <div>
+                                    <h1 class="h5 fw-semibold text-dark mb-1">선적 관리</h1>
+                                    <p class="text-sm text-muted mb-0">선적 신청서 현황을 조회, 관리할 수 있습니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            <button type="button" class="btn btn-primary d-flex align-items-center gap-2" t-on-click="handleAddNew">
+                                <i class="fa fa-plus" style="font-size: 1rem;"></i>
+                                <p class="d-none d-sm-block text-white text-center mb-0">선적 신청</p>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <!-- 검색 및 필터 -->
-            <div class="search-filter-section">
-                <div class="search-box">
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        placeholder="선적번호, 고객명, 차량번호로 검색..."
-                        t-model="state.searchTerm"
-                        t-on-input="handleSearchChange"
-                    />
-                </div>
-                <div class="filter-box">
-                    <select class="form-control" t-model="state.selectedStatus" t-on-change="handleStatusChange">
-                        <option value="all">전체 상태</option>
-                        <option value="pending">대기중</option>
-                        <option value="processing">처리중</option>
-                        <option value="completed">완료</option>
-                        <option value="cancelled">취소</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 데이터 테이블 -->
-            <div class="table-container">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>선적번호</th>
-                            <th>고객명</th>
-                            <th>차량번호</th>
-                            <th>선적일자</th>
-                            <th>상태</th>
-                            <th>작업</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <t t-if="state.isLoading">
-                            <tr>
-                                <td colspan="6" class="text-center">데이터를 불러오는 중...</td>
-                            </tr>
-                        </t>
-                        <t t-elif="filteredData.length === 0">
-                            <tr>
-                                <td colspan="6" class="text-center">등록된 선적이 없습니다.</td>
-                            </tr>
-                        </t>
-                        <t t-else="">
-                            <t t-foreach="filteredData" t-as="shipping" t-key="shipping.id">
-                                <tr>
-                                    <td>
-                                        <span class="shipping-number" t-on-click="() => this.viewShippingDetail(shipping.id)">
-                                            <t t-esc="shipping.shippingNumber"/>
-                                        </span>
-                                    </td>
-                                    <td><t t-esc="shipping.customerName"/></td>
-                                    <td><t t-esc="shipping.vehicleNumber"/></td>
-                                    <td><t t-esc="shipping.shippingDate"/></td>
-                                    <td>
-                                        <span t-attf-class="status-badge #{getStatusClass(shipping.status)}">
-                                            <t t-esc="getStatusText(shipping.status)"/>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-info" t-on-click="() => this.viewShippingDetail(shipping.id)">
-                                                <i class="fa fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" t-on-click="() => this.deleteShipping(shipping.id)">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
+            
+            <!-- 스크롤 가능한 컨텐츠 영역 -->
+            <div class="flex-grow-1 py-4" style="overflow-y: auto;">
+                <div class="container-fluid px-3 px-md-4 px-lg-5" style="max-width: 1400px; margin: 0 auto; padding-bottom: 2rem;">
+                    <!-- 상단 통계 요약 -->
+                    <div class="mb-4 mb-md-6 row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body p-3 p-md-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <p class="text-xs text-muted mb-1">전체 선적</p>
+                                            <p class="h4 h-md-3 fw-bold mb-0 text-dark"><t t-esc="data.length"/></p>
                                         </div>
-                                    </td>
-                                </tr>
-                            </t>
-                        </t>
-                    </tbody>
-                </table>
+                                        <i class="fa fa-ship text-primary" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body p-3 p-md-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <p class="text-xs text-muted mb-1">완료</p>
+                                            <p class="h4 h-md-3 fw-bold mb-0" style="color: #22c55e;"> <t t-esc="data.filter(item => item.status === 'completed').length"/> </p>
+                                        </div>
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:24px;height:24px;background:#d1fadf;">
+                                            <div style="width:12px;height:12px;background:#22c55e;border-radius:50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body p-3 p-md-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <p class="text-xs text-muted mb-1">처리중</p>
+                                            <p class="h4 h-md-3 fw-bold mb-0" style="color: #2563eb;"> <t t-esc="data.filter(item => item.status === 'processing').length"/> </p>
+                                        </div>
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:24px;height:24px;background:#dbeafe;">
+                                            <div style="width:12px;height:12px;background:#2563eb;border-radius:50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body p-3 p-md-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <p class="text-xs text-muted mb-1">대기중</p>
+                                            <p class="h4 h-md-3 fw-bold mb-0" style="color: #eab308;"> <t t-esc="data.filter(item => item.status === 'pending').length"/> </p>
+                                        </div>
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:24px;height:24px;background:#fef9c3;">
+                                            <div style="width:12px;height:12px;background:#eab308;border-radius:50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <!-- 왼쪽: 검색 필터 (3/12 너비) -->
+                        <div class="col-12 col-lg-3">
+                            <div class="card shadow-lg">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0 d-flex align-items-center gap-2 text-white">
+                                        <i class="fa fa-search"></i>
+                                        선적 데이터 검색
+                                    </h5>
+                                    <p class="text-sm mb-0" style="color: #e0e7ff;">조건을 설정하여 선적 데이터를 필터링하세요.</p>
+                                </div>
+                                <div class="card-body p-4">
+                                    <!-- 신청일자 -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
+                                            신청일자
+                                        </label>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <label for="dateFrom" class="form-label text-xs text-muted">시작일</label>
+                                                <input 
+                                                    type="date" 
+                                                    class="form-control form-control-sm" 
+                                                    id="dateFrom"
+                                                    t-att-value="state.dateFrom"
+                                                    t-on-input="(ev) => this.handleInputChange('dateFrom', ev.target.value)"
+                                                />
+                                            </div>
+                                            <div class="col-6">
+                                                <label for="dateTo" class="form-label text-xs text-muted">종료일</label>
+                                                <input 
+                                                    type="date" 
+                                                    class="form-control form-control-sm" 
+                                                    id="dateTo"
+                                                    t-att-value="state.dateTo"
+                                                    t-on-input="(ev) => this.handleInputChange('dateTo', ev.target.value)"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 상태별 -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-sm fw-medium d-flex align-items-center gap-2 mb-2">
+                                            상태별
+                                        </label>
+                                        <select 
+                                            class="form-select form-select-sm" 
+                                            t-att-value="state.status"
+                                            t-on-change="(ev) => this.handleInputChange('status', ev.target.value)"
+                                        >
+                                            <option value="">전체 상태</option>
+                                            <option value="completed">완료</option>
+                                            <option value="processing">처리중</option>
+                                            <option value="pending">대기중</option>
+                                            <option value="cancelled">취소</option>
+                                        </select>
+                                    </div>
+                                    <!-- 소유주 검색 -->
+                                    <div class="mb-3">
+                                        <label for="ownerName" class="form-label text-sm fw-medium mb-2">
+                                            소유주 검색
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control form-control-sm" 
+                                            id="ownerName"
+                                            placeholder="소유주를 입력하세요"
+                                            t-att-value="state.ownerName"
+                                            t-on-input="(ev) => this.handleInputChange('ownerName', ev.target.value)"
+                                        />
+                                    </div>
+                                    <!-- 차량번호 검색 -->
+                                    <div class="mb-3">
+                                        <label for="vehicleNumber" class="form-label text-sm fw-medium mb-2">
+                                            차량번호 검색
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control form-control-sm" 
+                                            id="vehicleNumber"
+                                            placeholder="차량번호를 입력하세요"
+                                            t-att-value="state.vehicleNumber"
+                                            t-on-input="(ev) => this.handleInputChange('vehicleNumber', ev.target.value)"
+                                        />
+                                    </div>
+                                    <!-- 구매자명 검색 -->
+                                    <div class="mb-3">
+                                        <label for="buyerName" class="form-label text-sm fw-medium mb-2">
+                                            구매자명 검색
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control form-control-sm" 
+                                            id="buyerName"
+                                            placeholder="구매자명을 입력하세요"
+                                            t-att-value="state.buyerName"
+                                            t-on-input="(ev) => this.handleInputChange('buyerName', ev.target.value)"
+                                        />
+                                    </div>
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-primary btn-sm w-100" 
+                                        t-on-click="handleReset"
+                                    >
+                                        <i class="fa fa-refresh me-2"></i>
+                                        초기화
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 오른쪽: 전체 선적 현황 (9/12 너비) -->
+                        <div class="col-12 col-lg-9">
+                            <div class="card shadow-lg h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fa fa-database"></i>
+                                            선적 현황
+                                        </div>
+                                        <span class="badge" style="background-color: #e0e7ff; color: #2563eb;">
+                                            <t t-esc="sortedData.length"/>건 / 전체 <t t-esc="data.length"/>건
+                                        </span>
+                                    </div>
+                                    <p class="text-sm mb-0" style="color: #e0e7ff;">
+                                        <t t-if="filteredData.length === data.length">
+                                            전체 선적 데이터를 정렬하여 확인할 수 있습니다.
+                                        </t>
+                                        <t t-else="">
+                                            필터링된 선적 데이터를 확인할 수 있습니다.
+                                        </t>
+                                    </p>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive" style="overflow-x: auto; overflow-y: auto; max-height: 60vh; width: 100%; border-radius: 0.375rem;">
+                                        <table class="table table-hover mb-0" style="min-width: 1800px; white-space: nowrap; font-size: 0.75rem;">
+                                            <thead class="table-light sticky-top" style="position: sticky; top: 0; z-index: 1020; background-color: #f8f9fa;">
+                                                <tr>
+                                                    <th style="min-width: 120px; width: 120px;">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                            t-on-click="() => this.handleSort('vehicle_id')"
+                                                        >
+                                                            차대번호
+                                                            <i class="fa fa-sort ms-1"></i>
+                                                        </button>
+                                                    </th>
+                                                    <th style="min-width: 120px; width: 120px;">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                            t-on-click="() => this.handleSort('owner_name')"
+                                                        >
+                                                            소유주
+                                                            <i class="fa fa-sort ms-1"></i>
+                                                        </button>
+                                                    </th>
+                                                    <th style="min-width: 140px; width: 140px;">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                            t-on-click="() => this.handleSort('registration_no')"
+                                                        >
+                                                            차량번호
+                                                            <i class="fa fa-sort ms-1"></i>
+                                                        </button>
+                                                    </th>
+                                                    <th style="min-width: 100px; width: 100px;">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                            t-on-click="() => this.handleSort('mileage')"
+                                                        >
+                                                            거리
+                                                            <i class="fa fa-sort ms-1"></i>
+                                                        </button>
+                                                    </th>
+                                                    <th style="min-width: 150px; width: 150px;">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                            t-on-click="() => this.handleSort('destination')"
+                                                        >
+                                                            수출국
+                                                            <i class="fa fa-sort ms-1"></i>
+                                                        </button>
+                                                    </th>
+                                                    <th style="min-width: 120px; width: 120px;">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                            t-on-click="() => this.handleSort('invoice_date')"
+                                                        >
+                                                            신청일자
+                                                            <i class="fa fa-sort ms-1"></i>
+                                                        </button>
+                                                    </th>
+                                                    <th style="min-width: 120px; width: 120px;">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                            t-on-click="() => this.handleSort('buyer_name')"
+                                                        >
+                                                            구매자
+                                                            <i class="fa fa-sort ms-1"></i>
+                                                        </button>
+                                                    </th>
+                                                    <th style="min-width: 140px; width: 140px;">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                            t-on-click="() => this.handleSort('buyer_contact')"
+                                                        >
+                                                            구매자연락처
+                                                            <i class="fa fa-sort ms-1"></i>
+                                                        </button>
+                                                    </th>
+                                                    <th style="min-width: 100px; width: 100px;">
+                                                        <button 
+                                                            type="button" 
+                                                            class="btn btn-link btn-sm p-0 fw-medium text-primary" 
+                                                            t-on-click="() => this.handleSort('cbm')"
+                                                        >
+                                                            CBM
+                                                            <i class="fa fa-sort ms-1"></i>
+                                                        </button>
+                                                    </th>
+                                                    <th style="min-width: 120px; width: 120px;">상태</th>
+                                                    <th style="min-width: 120px; width: 120px;" class="text-center">작업</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-if="sortedData.length === 0">
+                                                    <tr>
+                                                        <td colspan="12" class="text-center py-4 text-muted">
+                                                            검색 조건에 맞는 데이터가 없습니다.
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-else="">
+                                                    <t t-foreach="sortedData" t-as="item" t-key="item.id">
+                                                        <tr t-on-click="() => this.handleViewDetail(item)" style="cursor: pointer;">
+                                                            <td class="text-ellipsis fw-medium" style="min-width: 120px; width: 120px; max-width: 120px; font-family: monospace;">
+                                                                <t t-if="item.vehicle_id"><t t-esc="item.vehicle_id"/></t>
+                                                                <t t-else=""><span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.7rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span></t>
+                                                            </td>
+                                                            <td class="text-ellipsis" style="min-width: 120px; width: 120px; max-width: 120px;">
+                                                                <t t-if="item.owner_name"><t t-esc="item.owner_name"/></t>
+                                                                <t t-else=""><span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.7rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span></t>
+                                                            </td>
+                                                            <td class="text-ellipsis" style="min-width: 140px; width: 140px; max-width: 140px;">
+                                                                <t t-if="item.registration_no"><t t-esc="item.registration_no"/></t>
+                                                                <t t-else=""><span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.7rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span></t>
+                                                            </td>
+                                                            <td class="text-ellipsis" style="min-width: 100px; width: 100px; max-width: 100px;">
+                                                                <t t-if="item.mileage"><t t-esc="item.mileage"/> km</t>
+                                                                <t t-else=""><span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.7rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span></t>
+                                                            </td>
+                                                            <td class="text-ellipsis" style="min-width: 150px; width: 150px; max-width: 150px;">
+                                                                <t t-if="item.destination"><t t-esc="item.destination"/></t>
+                                                                <t t-else=""><span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.7rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span></t>
+                                                            </td>
+                                                            <td class="text-ellipsis" style="min-width: 120px; width: 120px; max-width: 120px;">
+                                                                <t t-if="item.invoice_date"><t t-esc="item.invoice_date"/></t>
+                                                                <t t-else=""><span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.7rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span></t>
+                                                            </td>
+                                                            <td class="text-ellipsis" style="min-width: 120px; width: 120px; max-width: 120px;">
+                                                                <t t-if="item.buyer_name"><t t-esc="item.buyer_name"/></t>
+                                                                <t t-else=""><span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.7rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span></t>
+                                                            </td>
+                                                            <td class="text-ellipsis" style="min-width: 140px; width: 140px; max-width: 140px;">
+                                                                <t t-if="item.buyer_contact"><t t-esc="item.buyer_contact"/></t>
+                                                                <t t-else=""><span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.7rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span></t>
+                                                            </td>
+                                                            <td class="text-ellipsis" style="min-width: 100px; width: 100px; max-width: 100px;">
+                                                                <t t-if="item.cbm"><t t-esc="item.cbm"/> m³</t>
+                                                                <t t-else=""><span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.7rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span></t>
+                                                            </td>
+                                                            <td class="text-ellipsis" style="min-width: 120px; width: 120px; max-width: 120px;">
+                                                                <t t-if="item.status === 'completed'">
+                                                                    <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded-pill" style="background:#d1fadf;color:#166534;font-weight:600;font-size:0.875rem;">
+                                                                        <i class="fa fa-check-circle" style="color:#22c55e;"></i>
+                                                                        완료
+                                                                    </span>
+                                                                </t>
+                                                                <t t-elif="item.status === 'processing'">
+                                                                    <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded-pill" style="background:#dbeafe;color:#1e40af;font-weight:600;font-size:0.875rem;">
+                                                                        <i class="fa fa-cog fa-spin" style="color:#2563eb;"></i>
+                                                                        처리중
+                                                                    </span>
+                                                                </t>
+                                                                <t t-elif="item.status === 'pending'">
+                                                                    <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded-pill" style="background:#fef9c3;color:#92400e;font-weight:600;font-size:0.875rem;">
+                                                                        <i class="fa fa-clock-o" style="color:#eab308;"></i>
+                                                                        대기중
+                                                                    </span>
+                                                                </t>
+                                                                <t t-elif="item.status === 'cancelled'">
+                                                                    <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded-pill" style="background:#fef2f2;color:#991b1b;font-weight:600;font-size:0.875rem;">
+                                                                        <i class="fa fa-times-circle" style="color:#dc2626;"></i>
+                                                                        취소
+                                                                    </span>
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded-pill" style="background:#f3f4f6;color:#374151;font-weight:600;font-size:0.875rem;">
+                                                                        <i class="fa fa-question-circle" style="color:#6b7280;"></i>
+                                                                        <t t-esc="item.status"/>
+                                                                    </span>
+                                                                </t>
+                                                            </td>
+                                                            <td class="text-center" style="min-width: 120px; width: 120px; max-width: 120px;">
+                                                                <div class="btn-group" role="group">
+                                                                    <button 
+                                                                        type="button" 
+                                                                        class="btn btn-outline-info btn-sm" 
+                                                                        t-on-click.stop="() => this.handleViewDetail(item)"
+                                                                        title="상세보기"
+                                                                    >
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </button>
+                                                                    <button 
+                                                                        type="button" 
+                                                                        class="btn btn-outline-warning btn-sm" 
+                                                                        t-on-click.stop="() => this.handleEdit(item)"
+                                                                        title="수정"
+                                                                    >
+                                                                        <i class="fa fa-edit"></i>
+                                                                    </button>
+                                                                    <button 
+                                                                        type="button" 
+                                                                        class="btn btn-outline-danger btn-sm" 
+                                                                        t-on-click.stop="() => this.handleDelete(item)"
+                                                                        title="삭제"
+                                                                    >
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- 통계 정보 -->
-            <div class="stats-section">
-                <div class="stat-card">
-                    <div class="stat-number"><t t-esc="state.shippingData.length"/></div>
-                    <div class="stat-label">전체 선적</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">
-                        <t t-esc="state.shippingData.filter(s => s.status === 'pending').length"/>
+            <!-- 상세보기 모달 -->
+            <div t-if="state.showDetailModal" class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-gradient-primary text-white" style="background: linear-gradient(90deg,#2563eb 0,#1e40af 100%); border-bottom: 0;">
+                            <h5 class="modal-title d-flex align-items-center gap-2">
+                                <i class="fa fa-ship me-2"></i>
+                                <span>선적 상세 정보</span>
+                                <t t-if="state.selectedItem">
+                                    <t t-if="state.selectedItem.status === 'completed'">
+                                        <span class="badge" style="background:#d1fadf;color:#166534;font-weight:600;">완료</span>
+                                    </t>
+                                    <t t-elif="state.selectedItem.status === 'processing'">
+                                        <span class="badge" style="background:#dbeafe;color:#1e40af;font-weight:600;">처리중</span>
+                                    </t>
+                                    <t t-elif="state.selectedItem.status === 'pending'">
+                                        <span class="badge" style="background:#fef9c3;color:#92400e;font-weight:600;">대기중</span>
+                                    </t>
+                                    <t t-elif="state.selectedItem.status === 'cancelled'">
+                                        <span class="badge" style="background:#fef2f2;color:#991b1b;font-weight:600;">취소</span>
+                                    </t>
+                                </t>
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" t-on-click="() => this.state.showDetailModal = false"></button>
+                        </div>
+                        <div class="modal-body">
+                            <t t-if="state.selectedItem">
+                                <div class="shipping-detail-list">
+                                    <!-- 차대번호 -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-barcode text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">차대번호</h6>
+                                                <small class="text-muted">Vehicle ID</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.vehicle_id">
+                                                <span class="fs-5 fw-medium" style="font-family: monospace;"><t t-esc="state.selectedItem.vehicle_id"/></span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.8rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- 소유주 -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-user text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">소유주</h6>
+                                                <small class="text-muted">Owner Name</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.owner_name">
+                                                <span class="fs-5 fw-medium" style=""><t t-esc="state.selectedItem.owner_name"/></span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.8rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- 차량번호 -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-car text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">차량번호</h6>
+                                                <small class="text-muted">Registration Number</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.registration_no">
+                                                <span class="fs-5 fw-medium" style=""><t t-esc="state.selectedItem.registration_no"/></span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.8rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- 주행거리 -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-road text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">주행거리</h6>
+                                                <small class="text-muted">Mileage</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.mileage">
+                                                <span class="fs-5 fw-medium" style=""><t t-esc="state.selectedItem.mileage"/> km</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.8rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- 수출국 -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-map-marker text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">수출국</h6>
+                                                <small class="text-muted">Destination</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.destination">
+                                                <span class="fs-5 fw-medium" style=""><t t-esc="state.selectedItem.destination"/></span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.8rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- 신청일자 -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-calendar text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">신청일자</h6>
+                                                <small class="text-muted">Application Date</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.invoice_date">
+                                                <span class="fs-5 fw-medium" style=""><t t-esc="state.selectedItem.invoice_date"/></span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.8rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- 구매자 -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-user-circle text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">구매자</h6>
+                                                <small class="text-muted">Buyer Name</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.buyer_name">
+                                                <span class="fs-5 fw-medium" style=""><t t-esc="state.selectedItem.buyer_name"/></span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.8rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- 구매자 연락처 -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #a8caba 0%, #5d4e75 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-phone text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">구매자 연락처</h6>
+                                                <small class="text-muted">Buyer Contact</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.buyer_contact">
+                                                <span class="fs-5 fw-medium" style=""><t t-esc="state.selectedItem.buyer_contact"/></span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.8rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- CBM -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-cube text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">CBM</h6>
+                                                <small class="text-muted">Cubic Meter</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.cbm">
+                                                <span class="fs-5 fw-medium" style="color: #0891b2;"><t t-esc="state.selectedItem.cbm"/> m³</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge" style="background-color: #f3f4f6; color: #9ca3af; font-size: 0.8rem; font-weight: 500; border: 1px dashed #d1d5db;">입력 전</span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- 상태 -->
+                                    <div class="detail-item mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="detail-icon" style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fa fa-info-circle text-white" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">상태</h6>
+                                                <small class="text-muted">Status</small>
+                                            </div>
+                                        </div>
+                                        <div class="detail-value">
+                                            <t t-if="state.selectedItem.status === 'completed'">
+                                                <span class="badge" style="background:#d1fadf;color:#166534;font-weight:600;">완료</span>
+                                            </t>
+                                            <t t-elif="state.selectedItem.status === 'processing'">
+                                                <span class="badge" style="background:#dbeafe;color:#1e40af;font-weight:600;">처리중</span>
+                                            </t>
+                                            <t t-elif="state.selectedItem.status === 'pending'">
+                                                <span class="badge" style="background:#fef9c3;color:#92400e;font-weight:600;">대기중</span>
+                                            </t>
+                                            <t t-elif="state.selectedItem.status === 'cancelled'">
+                                                <span class="badge" style="background:#fef2f2;color:#991b1b;font-weight:600;">취소</span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <div class="d-flex gap-2">
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-success" 
+                                        t-on-click="() => this.handleIssueCustomsInvoice(state.selectedItem)"
+                                        t-att-disabled="this.isButtonDisabled(state.selectedItem) || state.isProcessing"
+                                    >
+                                        <t t-if="state.isProcessing">
+                                            <i class="fa fa-spinner fa-spin me-2"></i>
+                                        </t>
+                                        <t t-else="">
+                                            <i class="fa fa-file-pdf-o me-2"></i>
+                                        </t>
+                                        선적통관 PDF 발급
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-info" 
+                                        t-on-click="() => this.handleIssueShippingInvoice(state.selectedItem)"
+                                        t-att-disabled="this.isButtonDisabled(state.selectedItem) || state.isProcessing"
+                                    >
+                                        <t t-if="state.isProcessing">
+                                            <i class="fa fa-spinner fa-spin me-2"></i>
+                                        </t>
+                                        <t t-else="">
+                                            <i class="fa fa-file-pdf-o me-2"></i>
+                                        </t>
+                                        선적신청 PDF 발급
+                                    </button>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-secondary" t-on-click="() => this.state.showDetailModal = false">닫기</button>
+                                    <button type="button" class="btn btn-warning" t-on-click="handleEditFromModal">수정</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-label">대기중</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">
-                        <t t-esc="state.shippingData.filter(s => s.status === 'processing').length"/>
+            </div>
+
+            <!-- 추가/수정 모달 -->
+            <div t-if="state.showEditModal" class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning text-dark">
+                            <h5 class="modal-title">
+                                <i class="fa fa-edit me-2"></i>
+                                <t t-if="state.isEditing">선적 정보 수정</t>
+                                <t t-else="">새 선적 신청</t>
+                            </h5>
+                            <button type="button" class="btn-close" t-on-click="() => this.state.showEditModal = false"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form t-on-submit="handleSave">
+                                <div class="edit-form-container">
+                                    <!-- 차대번호 (읽기 전용) -->
+                                    <div class="form-group mb-3">
+                                        <label for="editVehicleId" class="form-label fw-medium d-flex align-items-center gap-2">
+                                            <i class="fa fa-barcode text-primary"></i>
+                                            차대번호
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control" 
+                                            id="editVehicleId"
+                                            t-att-value="state.editForm.vehicle_id"
+                                            disabled="disabled"
+                                            style="background-color: #f8f9fa;"
+                                        />
+                                        <small class="text-muted">기존 정보입니다.</small>
+                                    </div>
+
+                                    <!-- 고객명 (읽기 전용) -->
+                                    <div class="form-group mb-3">
+                                        <label for="editCustomerName" class="form-label fw-medium d-flex align-items-center gap-2">
+                                            <i class="fa fa-user text-primary"></i>
+                                            고객명
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control" 
+                                            id="editCustomerName"
+                                            t-att-value="state.editForm.customer_name"
+                                            disabled="disabled"
+                                            style="background-color: #f8f9fa;"
+                                        />
+                                        <small class="text-muted">기존 정보입니다.</small>
+                                    </div>
+
+                                    <!-- 차량번호 (읽기 전용) -->
+                                    <div class="form-group mb-3">
+                                        <label for="editRegistrationNo" class="form-label fw-medium d-flex align-items-center gap-2">
+                                            <i class="fa fa-car text-primary"></i>
+                                            차량번호
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control" 
+                                            id="editRegistrationNo"
+                                            t-att-value="state.editForm.registration_no"
+                                            disabled="disabled"
+                                            style="background-color: #f8f9fa;"
+                                        />
+                                        <small class="text-muted">기존 정보입니다.</small>
+                                    </div>
+
+                                    <!-- 목적지 (수정 가능) -->
+                                    <div class="form-group mb-3">
+                                        <label for="editDestination" class="form-label fw-medium d-flex align-items-center gap-2">
+                                            <i class="fa fa-map-marker text-primary"></i>
+                                            목적지
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control" 
+                                            id="editDestination"
+                                            t-att-value="state.editForm.destination"
+                                            t-on-input="(ev) => this.handleEditFormChange('destination', ev.target.value)"
+                                            placeholder="수출 목적지를 입력하세요"
+                                            required="required"
+                                        />
+                                        <small class="text-muted">선적 목적지를 입력해주세요.</small>
+                                    </div>
+
+                                    <!-- 구매자이름 (수정 가능) -->
+                                    <div class="form-group mb-3">
+                                        <label for="editBuyerName" class="form-label fw-medium d-flex align-items-center gap-2">
+                                            <i class="fa fa-user-circle text-primary"></i>
+                                            구매자이름
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control" 
+                                            id="editBuyerName"
+                                            t-att-value="state.editForm.buyer_name"
+                                            t-on-input="(ev) => this.handleEditFormChange('buyer_name', ev.target.value)"
+                                            placeholder="구매자 이름을 입력하세요"
+                                            required="required"
+                                        />
+                                        <small class="text-muted">해외 구매자 이름을 입력해주세요.</small>
+                                    </div>
+
+                                    <!-- 구매자연락처 (수정 가능) -->
+                                    <div class="form-group mb-3">
+                                        <label for="editBuyerContact" class="form-label fw-medium d-flex align-items-center gap-2">
+                                            <i class="fa fa-phone text-primary"></i>
+                                            구매자연락처
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control" 
+                                            id="editBuyerContact"
+                                            t-att-value="state.editForm.buyer_contact"
+                                            t-on-input="(ev) => this.handleEditFormChange('buyer_contact', ev.target.value)"
+                                            placeholder="구매자 연락처를 입력하세요"
+                                            required="required"
+                                        />
+                                        <small class="text-muted">해외 구매자 연락처를 입력해주세요.</small>
+                                    </div>
+
+                                    <!-- 신청일자 (수정 가능) -->
+                                    <div class="form-group mb-3">
+                                        <label for="editInvoiceDate" class="form-label fw-medium d-flex align-items-center gap-2">
+                                            <i class="fa fa-calendar text-primary"></i>
+                                            신청일자
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input 
+                                            type="date" 
+                                            class="form-control" 
+                                            id="editInvoiceDate"
+                                            t-att-value="state.editForm.invoice_date"
+                                            t-on-input="(ev) => this.handleEditFormChange('invoice_date', ev.target.value)"
+                                            required="required"
+                                        />
+                                        <small class="text-muted">선적 신청일자를 선택해주세요.</small>
+                                    </div>
+
+                                    <!-- 상태 -->
+                                    <div class="form-group mb-3">
+                                        <label for="editStatus" class="form-label fw-medium d-flex align-items-center gap-2">
+                                            <i class="fa fa-info-circle text-primary"></i>
+                                            상태
+                                        </label>
+                                        <select 
+                                            class="form-select" 
+                                            id="editStatus"
+                                            t-att-value="state.editForm.status"
+                                            t-on-change="(ev) => this.handleEditFormChange('status', ev.target.value)"
+                                        >
+                                            <option value="pending">대기중</option>
+                                            <option value="processing">처리중</option>
+                                            <option value="completed">완료</option>
+                                            <option value="cancelled">취소</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" t-on-click="() => this.state.showEditModal = false">취소</button>
+                            <button type="button" class="btn btn-warning" t-on-click="handleSave">저장</button>
+                        </div>
                     </div>
-                    <div class="stat-label">처리중</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">
-                        <t t-esc="state.shippingData.filter(s => s.status === 'completed').length"/>
-                    </div>
-                    <div class="stat-label">완료</div>
                 </div>
             </div>
         </div>

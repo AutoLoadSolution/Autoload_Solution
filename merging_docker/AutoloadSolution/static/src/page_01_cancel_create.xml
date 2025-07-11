@@ -29,8 +29,9 @@
             </div>
             
             <!-- 스크롤 가능한 컨텐츠 영역 -->
-            <div class="flex-grow-1 py-4" style="overflow-y: auto; display: flex; justify-content: center;">
-                <div class="px-4 px-md-6 px-lg-7 mb-4" style="max-width: 800px; padding-bottom: 2rem;">
+            <div class="flex-grow-1 py-4" style="overflow-y: auto;">
+                <div class="d-flex justify-content-center">
+                    <div class="px-4 px-md-6 px-lg-7" style="max-width: 800px; width: 100%; padding-bottom: 4rem;">
             <form t-on-submit="handleSubmit">
                 <div class="card shadow-lg">
                     <div class="card-body p-6 space-y-6">
@@ -193,6 +194,7 @@
                     </div>
                 </div>
             </form>
+                    </div>
                 </div>
             </div>
         </div>
