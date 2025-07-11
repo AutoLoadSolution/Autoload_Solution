@@ -17,7 +17,7 @@ class Cancellation(models.Model):
     # 이후 단계에서 추가될 항목
     destination = fields.Char(string="도착지")
     invoice_date = fields.Date(string="선적 예정일")
-    is_checked = fields.Boolean(string="검수 여부", default=False)
+    is_checked = fields.Boolean(string="발급 상태", default=False)
     buyer_name = fields.Char(string="구매자")
     buyer_contact = fields.Char(string="구매자 연락처")
 

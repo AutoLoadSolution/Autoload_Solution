@@ -128,6 +128,22 @@ class CancelVehicleController(http.Controller):
                 } for v in cancellation.vehicleinfo_ids
             ]
         }
+    
+    @http.route('/autoloadsolution/cancel/mark_checked', type='json', auth='user')
+    def mark_as_checked(self, **kwargs):
+        vehicle_id = kwargs.get('vehicle_id')
+        if not vehicle_id:
+            return {'error': 'vehicle_id는 필수입니다'}
+
+        cancellation = request.env['autoloadsolution.cancellation'].sudo().search([
+            ('vehicle_id', '=', vehicle_id)
+        ], limit=1)
+
+        if not cancellation:
+            return {'error': '해당 vehicle_id에 대한 말소 데이터가 없습니다'}
+
+        cancellation.sudo().write({'isChecked': True})
+        return {'status': 'isChecked 업데이트 완료'}
 
 
 class ShippingController(http.Controller):
